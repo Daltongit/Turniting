@@ -1,181 +1,144 @@
-/* Variables Globales y Paleta Hacker/Tech */
+/* Paleta Ultra-Moderna (Dark Mode) */
 :root {
-    --bg-dark: #050505;
-    --glass-bg: rgba(25, 25, 35, 0.6);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --text-main: #e2e8f0;
-    --primary: #00f0ff; /* Cyan neon */
-    --secondary: #7000ff; /* Purple neon */
-    --font-text: 'Poppins', sans-serif;
-    --font-code: 'Fira Code', monospace;
-    --transition-speed: 0.5s;
+    --bg-base: #09090b;
+    --bg-surface: #18181b;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --text-primary: #f4f4f5;
+    --text-secondary: #a1a1aa;
+    --accent-blue: #3b82f6;
+    --accent-purple: #8b5cf6;
+    --font-main: 'Inter', sans-serif;
+    --font-code: 'JetBrains Mono', monospace;
+    --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: var(--font-text);
-    background-color: var(--bg-dark);
-    color: var(--text-main);
-    overflow: hidden;
-    position: relative;
+    font-family: var(--font-main); background-color: var(--bg-base); color: var(--text-primary);
+    overflow: hidden; line-height: 1.6;
 }
 
-/* Fondo dinámico sutil */
-.bg-particles {
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    background: radial-gradient(circle at center, #1a1a2e 0%, #050505 100%);
-    z-index: -1;
+/* Fondo Ambiente Fluido */
+.ambient-background {
+    position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1;
+    background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 30%);
+    animation: rotateAmbient 30s linear infinite;
 }
+@keyframes rotateAmbient { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-.presentation-container {
-    position: relative; width: 100vw; height: 100vh;
-}
+.app-container { position: relative; width: 100vw; height: 100vh; }
 
-/* Diapositivas base */
+/* Sistema de Slides con Fluidez Máxima */
 .slide {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    opacity: 0; visibility: hidden;
-    transition: opacity var(--transition-speed) ease-in-out;
-    display: flex; align-items: center; justify-content: center;
-    padding: 5%;
+    opacity: 0; visibility: hidden; transform: scale(0.95);
+    transition: opacity 0.8s var(--ease-fluid), transform 0.8s var(--ease-fluid), visibility 0.8s;
+    display: flex; align-items: center; justify-content: center; padding: 5vw;
 }
+.slide.active { opacity: 1; visibility: visible; transform: scale(1); z-index: 10; }
 
-.slide.active { opacity: 1; visibility: visible; z-index: 10; }
-.content { width: 100%; max-width: 1200px; }
-.text-center { text-align: center; }
-.mb-2 { margin-bottom: 2rem; }
-.mt-1 { margin-top: 1rem; }
-.mt-2 { margin-top: 2rem; }
+/* Contenedores y Layouts */
+.content-wrapper { width: 100%; max-width: 1300px; display: flex; gap: 4rem; align-items: center; }
+.content-wrapper.vertical { flex-direction: column; text-align: center; }
+.content-wrapper.full-width { flex-direction: column; align-items: flex-start; }
+.grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
 
-/* Tipografía */
-h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 1rem; color: #fff; min-height: 80px; }
-h2 { font-size: 2.8rem; color: var(--primary); margin-bottom: 1.5rem; text-shadow: 0 0 15px rgba(0, 240, 255, 0.4); }
-p { font-size: 1.1rem; line-height: 1.7; margin-bottom: 1.2rem; }
+/* Tipografía Avanzada */
+h1 { font-size: 4.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -1px; }
+h2 { font-size: 3rem; font-weight: 600; margin-bottom: 1.5rem; letter-spacing: -0.5px; }
+h3 { font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-primary); }
+p { font-size: 1.15rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
+.gradient-text { background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.badge { display: inline-block; padding: 6px 12px; border-radius: 20px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-blue); font-size: 0.9rem; font-weight: 600; margin-bottom: 2rem; letter-spacing: 1px; text-transform: uppercase; }
 
-/* Glassmorphism Panels */
-.glass-panel {
-    background: var(--glass-bg);
-    backdrop-filter: blur(15px);
-    border: 1px solid var(--glass-border);
-    border-radius: 20px;
-    padding: 3rem;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-}
+/* Componentes Interactivos */
+/* 1. Acordeón (Turing Info) */
+.info-accordion { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem; }
+.accordion-item h4 { font-size: 1.2rem; color: var(--text-primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 10px; }
+.accordion-item h4 i { color: var(--accent-blue); }
+.accordion-item p { font-size: 1rem; border-left: 2px solid var(--border-color); padding-left: 1rem; margin-left: 8px; }
 
-/* Botones interactivos */
-.btn-start, .btn-outline {
-    padding: 15px 30px;
-    font-size: 1.2rem;
-    font-family: var(--font-text);
-    font-weight: 600;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-}
+/* 2. Máquina de Turing Visual */
+.turing-machine-simulator { margin: 3rem 0; width: 100%; display: flex; flex-direction: column; align-items: center; }
+.tape-container { position: relative; width: 100%; max-width: 600px; height: 80px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
+.tape { display: flex; gap: 5px; transform: translateX(0); animation: moveTape 4s var(--ease-fluid) infinite alternate; }
+.cell { width: 60px; height: 60px; background: var(--bg-surface); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-family: var(--font-code); font-size: 1.5rem; border-radius: 8px; }
+.cell.active-cell { border-color: var(--accent-blue); color: var(--accent-blue); box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
+.read-head { position: absolute; bottom: -5px; text-align: center; color: var(--accent-purple); font-weight: bold; font-family: var(--font-code); font-size: 0.8rem; }
+@keyframes moveTape { 0% { transform: translateX(65px); } 100% { transform: translateX(-65px); } }
 
-.btn-start {
-    background: linear-gradient(45deg, var(--primary), var(--secondary));
-    color: #fff;
-    border: none;
-    box-shadow: 0 0 20px rgba(112, 0, 255, 0.4);
-}
-.btn-start:hover { transform: translateY(-5px); box-shadow: 0 0 30px rgba(0, 240, 255, 0.6); }
+/* 3. Caja Matemática (Fórmula Turing) */
+.math-box { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 900px; text-align: left; }
+.formula { font-size: 1.8rem; text-align: center; margin: 1.5rem 0; } /* MathJax procesará el LaTeX aquí */
+.math-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-family: var(--font-main); font-size: 1rem; color: var(--text-secondary); margin-top: 2rem; }
 
-.btn-outline {
-    background: transparent;
-    color: var(--primary);
-    border: 2px solid var(--primary);
-}
-.btn-outline:hover { background: var(--primary); color: #000; box-shadow: 0 0 15px var(--primary); }
+/* 4. Sistema de Pestañas (Evolución IA) */
+.tabs-container { width: 100%; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; }
+.tabs-nav { display: flex; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.2); }
+.tab-btn { flex: 1; padding: 1.5rem; background: none; border: none; color: var(--text-secondary); font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; position: relative; }
+.tab-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.02); }
+.tab-btn.active { color: var(--accent-blue); }
+.tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--accent-blue); box-shadow: 0 -2px 10px rgba(59, 130, 246, 0.5); }
+.tabs-content { padding: 3rem; height: 350px; overflow-y: auto; }
+.tab-pane { display: none; opacity: 0; transform: translateY(10px); transition: all 0.4s var(--ease-fluid); }
+.tab-pane.active { display: block; opacity: 1; transform: translateY(0); }
+.tab-pane p { font-size: 1.1rem; margin-bottom: 1rem; }
 
-/* Grid Layouts */
-.grid-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
-.grid-layout.reverse { direction: rtl; }
-.grid-layout.reverse > * { direction: ltr; }
+/* 5. Chat UI Moderno (Simulador Turing) */
+.modern-chat { width: 100%; background: #000; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; height: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+.chat-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; font-family: var(--font-code); font-size: 0.9rem; color: var(--text-secondary); }
+.status-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; }
+.chat-window { flex: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
+.msg { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 1rem; line-height: 1.4; animation: popIn 0.3s var(--ease-fluid); }
+.msg.human { align-self: flex-end; background: var(--accent-blue); color: #fff; border-bottom-right-radius: 4px; }
+.msg.ai { align-self: flex-start; background: var(--bg-surface); border: 1px solid var(--border-color); border-bottom-left-radius: 4px; }
+.typing-indicator { align-self: flex-start; background: var(--bg-surface); padding: 12px 16px; border-radius: 16px; display: flex; gap: 4px; border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
+.typing-indicator span { width: 6px; height: 6px; background: var(--text-secondary); border-radius: 50%; animation: blink 1.4s infinite both; }
+.typing-indicator span:nth-child(2) { animation-delay: 0.2s; } .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+.chat-input-area { padding: 1rem; border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
+.fake-input { flex: 1; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 20px; padding: 0 1rem; color: var(--text-secondary); }
+.fake-send { width: 40px; height: 40px; border-radius: 50%; background: var(--accent-blue); border: none; color: #fff; display: flex; align-items: center; justify-content: center; }
 
-/* Cajas Técnicas (Estilo Código) */
-.tech-box {
-    background: #0f172a; border-left: 4px solid var(--secondary);
-    padding: 1.5rem; border-radius: 8px; margin-top: 1.5rem;
-    font-family: var(--font-code);
-}
-.tech-box h4 { color: var(--text-main); margin-bottom: 0.5rem; }
-.latex-math { font-size: 1.3rem; color: #f1fa8c; text-align: center; margin: 10px 0; letter-spacing: 2px;}
-.small-text { font-size: 0.9rem; list-style: none; color: #94a3b8; }
+/* Botones UI Principales */
+.btn-primary { background: var(--text-primary); color: var(--bg-base); border: none; padding: 12px 28px; border-radius: 30px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s var(--ease-fluid); }
+.btn-primary:hover { transform: scale(1.05); background: #fff; box-shadow: 0 10px 20px rgba(255,255,255,0.1); }
 
-/* Flip Cards (Tarjetas 3D para Turing) */
-.cards-grid { display: flex; gap: 2rem; justify-content: center; margin-top: 2rem; }
-.flip-card { background-color: transparent; width: 400px; height: 250px; perspective: 1000px; }
-.flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.8s; transform-style: preserve-3d; }
-.flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
-.flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 2rem; border: 1px solid var(--glass-border); }
-.flip-card-front { background: linear-gradient(135deg, rgba(30,30,40,0.8), rgba(15,15,20,0.8)); backdrop-filter: blur(10px); color: var(--primary); }
-.flip-card-back { background: var(--secondary); color: white; transform: rotateY(180deg); box-shadow: 0 0 30px rgba(112,0,255,0.3); }
-.flip-card-front i { margin-bottom: 1rem; text-shadow: 0 0 10px var(--primary); }
+/* Navegación Inferior (Puntos y Flechas) */
+.presentation-nav { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 2rem; background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(12px); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-color); z-index: 100; }
+.nav-btn { background: none; border: none; color: var(--text-primary); font-size: 1.2rem; cursor: pointer; transition: all 0.2s; opacity: 0.7; }
+.nav-btn:hover { opacity: 1; transform: scale(1.1); color: var(--accent-blue); }
+.dots-container { display: flex; gap: 10px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-secondary); cursor: pointer; transition: all 0.3s; opacity: 0.5; }
+.dot.active { opacity: 1; background: var(--accent-blue); transform: scale(1.5); }
 
-/* Simulador Chat UI */
-.chat-ui { background: #111; border: 1px solid #333; border-radius: 12px; overflow: hidden; height: 350px; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-.chat-header { background: #1a1a1a; padding: 15px; text-align: center; font-family: var(--font-code); font-size: 0.9rem; border-bottom: 1px solid #333; color: #4ade80; }
-.chat-body { padding: 15px; flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; font-size: 0.95rem; }
-.message { max-width: 80%; padding: 10px 15px; border-radius: 12px; animation: fadeIn 0.3s ease; }
-.message.system { align-self: center; background: transparent; color: #666; font-size: 0.8rem; font-style: italic; }
-.message.evaluator { align-self: flex-end; background: var(--secondary); color: white; border-bottom-right-radius: 2px; }
-.message.entity { align-self: flex-start; background: #2d2d2d; color: white; border-bottom-left-radius: 2px; border-left: 2px solid var(--primary); }
+/* Sistema de Animaciones Avanzadas (Scroll/Active) */
+.slide .animate-slide-up, .slide .animate-slide-left, .slide .animate-slide-right, .slide .animate-fade { opacity: 0; }
+.slide.active .animate-slide-up { animation: floatUp 1s var(--ease-fluid) forwards; }
+.slide.active .animate-slide-left { animation: floatLeft 1s var(--ease-fluid) forwards; }
+.slide.active .animate-slide-right { animation: floatRight 1s var(--ease-fluid) forwards; }
+.slide.active .animate-fade { animation: fadeIn 1s var(--ease-fluid) forwards; }
 
-/* Línea de tiempo interactiva */
-.interactive-timeline { margin-top: 2rem; display: flex; flex-direction: column; gap: 2rem; }
-.timeline-nav { display: flex; justify-content: space-between; border-bottom: 2px solid #333; padding-bottom: 10px; }
-.tl-btn { background: none; border: none; color: #666; font-size: 1.1rem; font-family: var(--font-text); cursor: pointer; padding: 10px; transition: all 0.3s; position: relative; }
-.tl-btn::after { content: ''; position: absolute; bottom: -12px; left: 0; width: 0%; height: 2px; background: var(--primary); transition: width 0.3s; }
-.tl-btn.active { color: var(--primary); font-weight: bold; }
-.tl-btn.active::after { width: 100%; box-shadow: 0 0 10px var(--primary); }
-.tl-panel { display: none; animation: slideInRight 0.5s ease; padding: 2rem; }
-.tl-panel.active { display: block; }
+.delay-1 { animation-delay: 0.2s !important; }
+.delay-2 { animation-delay: 0.4s !important; }
+.delay-3 { animation-delay: 0.6s !important; }
 
-/* Grid de Tecnologías Actuales */
-.tech-grid { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; }
-.tech-item { text-align: center; color: #94a3b8; font-weight: 600; transition: all 0.3s; }
-.tech-item i { font-size: 3rem; margin-bottom: 10px; color: var(--primary); transition: transform 0.3s, text-shadow 0.3s; }
-.tech-item:hover { color: #fff; }
-.tech-item:hover i { transform: translateY(-10px); text-shadow: 0 10px 20px var(--primary); }
+@keyframes floatUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes floatLeft { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes floatRight { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes popIn { 0% { opacity: 0; transform: scale(0.9) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+@keyframes blink { 0%, 100% { opacity: 0.2; } 20% { opacity: 1; } }
 
-/* Controles de Navegación */
-.controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 20px; z-index: 100; background: rgba(5, 5, 5, 0.8); padding: 10px 20px; border-radius: 50px; backdrop-filter: blur(10px); border: 1px solid var(--glass-border); }
-.controls button { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-.controls button:hover { background: rgba(255,255,255,0.1); color: var(--primary); }
-.progress-container { width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; }
-.progress-bar { height: 100%; background: var(--primary); width: 0%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 10px var(--primary); }
+/* Imágenes */
+.image-showcase img { width: 100%; max-width: 400px; border-radius: 16px; object-fit: cover; filter: grayscale(50%) contrast(120%); transition: filter 0.5s; border: 1px solid var(--border-color); }
+.image-showcase img:hover { filter: grayscale(0%) contrast(100%); }
 
-/* Animaciones CSS */
-.slide .animate-up, .slide .animate-left, .slide .animate-right, .slide .animate-fade { opacity: 0; }
-.slide.active .animate-up { animation: slideUp 0.8s ease forwards; }
-.slide.active .animate-left { animation: slideInLeft 0.8s ease forwards; }
-.slide.active .animate-right { animation: slideInRight 0.8s ease forwards; }
-.slide.active .animate-fade { animation: fadeIn 1s ease forwards; }
-
-.delay-1 { animation-delay: 0.3s !important; }
-.delay-2 { animation-delay: 0.6s !important; }
-.delay-3 { animation-delay: 0.9s !important; }
-
-@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slideInLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes iconPulse { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; text-shadow: 0 0 20px var(--primary); } 100% { transform: scale(1); opacity: 0.8; } }
-
-.icon-pulse { font-size: 4rem; color: var(--primary); margin-bottom: 1rem; animation: iconPulse 3s infinite; }
-
-/* Responsive */
-@media (max-width: 900px) {
-    .grid-layout, .cards-grid { grid-template-columns: 1fr; flex-direction: column; align-items: center; }
-    .grid-layout.reverse { direction: ltr; }
-    h1 { font-size: 2.2rem; } h2 { font-size: 1.8rem; }
-    .timeline-nav { flex-direction: column; gap: 10px; align-items: flex-start; }
-    .tl-btn { padding: 5px 0; }
-    .flip-card { width: 100%; max-width: 350px; }
+/* Responsive Grid */
+@media (max-width: 1024px) {
+    .content-wrapper, .grid-split { flex-direction: column; text-align: center; }
+    h1 { font-size: 3rem; }
+    .math-grid { grid-template-columns: 1fr; }
+    .tabs-nav { flex-wrap: wrap; }
+    .tab-btn { flex: 1 1 50%; font-size: 1rem; padding: 1rem; }
 }

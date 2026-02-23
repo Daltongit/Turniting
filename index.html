@@ -1,153 +1,165 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Evolución de la IA & La Máquina de Turing</title>
+    <title>Evolución de la IA & Alan Turing</title>
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-
 <body>
 
-    <div class="presentation-container">
+    <div class="bg-particles"></div>
 
+    <div class="presentation-container">
+        
         <section class="slide active" id="slide-1">
-            <div class="content text-center">
-                <h1 class="animate-up delay-1">La Evolución de la <span class="highlight">Inteligencia Artificial</span>
-                </h1>
-                <p class="subtitle animate-up delay-2">Desde la Máquina de Turing hasta la Era del Deep Learning</p>
-                <div class="graphic-element animate-fade delay-3">
-                    <img src="img/bg-inicio.jpg" alt="Fondo IA" class="hero-img">
-                </div>
-                <p class="instruction animate-fade delay-4">Usa las flechas ⬅ ➡ para navegar</p>
+            <div class="content text-center glass-panel">
+                <div class="icon-pulse"><i class="fa-solid fa-microchip"></i></div>
+                <h1 id="typewriter-title"></h1>
+                <p class="subtitle animate-fade delay-2">De la teoría de la computación a las Redes Neuronales Profundas</p>
+                <button class="btn-start animate-fade delay-3" onclick="nextSlide()">Iniciar Recorrido <i class="fa-solid fa-arrow-right"></i></button>
             </div>
         </section>
 
         <section class="slide" id="slide-2">
-            <div class="content grid-layout">
-                <div class="text-box animate-left">
-                    <h2>Los Inicios (1950 - 1974)</h2>
-                    <p>La IA nació formalmente en la Conferencia de Dartmouth (1956), donde John McCarthy acuñó el
-                        término "Inteligencia Artificial".</p>
-                    <ul>
-                        <li>Se crearon los primeros programas que jugaban ajedrez y resolvían problemas algebraicos.
-                        </li>
-                        <li><strong>ELIZA (1966):</strong> Uno de los primeros chatbots, capaz de simular a un
-                            psicoterapeuta.</li>
-                        <li>Había un optimismo desmedido: se creía que en 20 años las máquinas harían cualquier trabajo
-                            humano.</li>
-                    </ul>
-                </div>
-                <div class="image-box animate-right">
-                    <img src="img/ia-inicios.png" alt="Inicios de la IA">
+            <div class="content">
+                <h2 class="text-center"><i class="fa-solid fa-user-astronaut"></i> El Padre de la Computación: Alan Turing</h2>
+                <p class="text-center mb-2">Matemático, lógico y criptógrafo británico. Su trabajo no solo salvó millones de vidas, sino que sentó las bases lógicas del software moderno.</p>
+                
+                <div class="cards-grid">
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <i class="fa-solid fa-shield-halved fa-3x"></i>
+                                <h3>La Segunda Guerra Mundial</h3>
+                                <p>(Pasa el mouse para girar)</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <h3>La Máquina Bombe</h3>
+                                <p>Lideró el equipo en Bletchley Park que descifró la máquina "Enigma" de los nazis. Se estima que su trabajo acortó la guerra en más de dos años, salvando 14 millones de vidas.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front">
+                                <i class="fa-solid fa-brain fa-3x"></i>
+                                <h3>Visión de Futuro</h3>
+                                <p>(Pasa el mouse para girar)</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <h3>Biología y Computación</h3>
+                                <p>Turing no solo pensó en algoritmos. En sus últimos años investigó la morfogénesis, buscando explicar matemáticamente los patrones de la naturaleza (como las manchas de un leopardo).</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section class="slide" id="slide-3">
-            <div class="content grid-layout reverse">
-                <div class="text-box animate-right">
-                    <h2>El "Invierno de la IA" (1974 - 1993)</h2>
-                    <p>El optimismo chocó con la realidad. El poder computacional de la época era insuficiente y los
-                        fondos gubernamentales se congelaron.</p>
-                    <ul>
-                        <li>Los algoritmos no escalaban para problemas del mundo real.</li>
-                        <li>Hubo periodos de estancamiento donde la palabra "IA" era casi un tabú en la investigación.
-                        </li>
-                        <li>Surgieron los <strong>Sistemas Expertos</strong> en los 80s, pero su mantenimiento era
-                            demasiado costoso.</li>
-                    </ul>
+            <div class="content grid-layout">
+                <div class="text-box animate-left">
+                    <h2><i class="fa-solid fa-cogs"></i> La Máquina de Turing (1936)</h2>
+                    <p>Antes de que existieran las computadoras físicas, Turing diseñó un modelo matemático abstracto. Demostró que una máquina universal podía ejecutar cualquier algoritmo matemático computable si se le daban las instrucciones correctas.</p>
+                    
+                    <div class="tech-box">
+                        <h4>Definición Formal Matemática</h4>
+                        <p>La máquina se define como una tupla:</p>
+                        <p class="latex-math">$M = \langle Q, \Gamma, b, \Sigma, \delta, q_0, F \rangle$</p>
+                        <ul class="small-text">
+                            <li><strong>Q:</strong> Estados finitos.</li>
+                            <li><strong>Γ:</strong> Alfabeto de la cinta.</li>
+                            <li><strong>δ:</strong> Función de transición (la lógica).</li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="image-box animate-left">
-                    <img src="img/ia-invierno.jpg" alt="Invierno de la IA">
+                <div class="image-box animate-right glass-panel">
+                    
+                    <img src="img/maquina-turing.jpg" alt="Componentes de la Máquina de Turing">
+                    <p class="caption">Concepto: Cinta infinita y cabezal de lectura/escritura.</p>
                 </div>
             </div>
         </section>
 
         <section class="slide" id="slide-4">
-            <div class="content grid-layout">
-                <div class="text-box animate-left">
-                    <h2>La Era Actual: El Boom del Deep Learning</h2>
-                    <p>Gracias al aumento exponencial del poder de cómputo (GPUs) y la disponibilidad masiva de datos
-                        (Big Data), la IA resurgió con fuerza.</p>
-                    <ul>
-                        <li><strong>Machine Learning:</strong> Las máquinas aprenden patrones de los datos sin ser
-                            programadas explícitamente.</li>
-                        <li><strong>Redes Neuronales Profundas:</strong> Revolucionaron la visión artificial y el
-                            procesamiento de lenguaje natural.</li>
-                        <li>Hoy interactuamos con Modelos de Lenguaje Grande (LLMs) que redactan, programan y analizan a
-                            nivel casi humano.</li>
-                    </ul>
+            <div class="content grid-layout reverse">
+                <div class="text-box animate-right">
+                    <h2><i class="fa-solid fa-comments"></i> El Test de Turing (1950)</h2>
+                    <p>En su artículo <em>"Computing Machinery and Intelligence"</em>, Turing evadió la pregunta "¿pueden pensar las máquinas?" reemplazándola por el <strong>"Juego de la Imitación"</strong>.</p>
+                    <p>Si un interrogador humano no puede distinguir si está chateando con un humano o con un algoritmo, la máquina ha superado la prueba.</p>
+                    <button class="btn-outline mt-1" onclick="startTuringSimulation()">Simular Test</button>
                 </div>
-                <div class="image-box animate-right">
-                    <img src="img/ia-actualidad.jpg" alt="IA en la actualidad">
+                <div class="image-box animate-left">
+                    <div class="chat-ui" id="chat-ui">
+                        <div class="chat-header">Conexión Segura - Sujeto A y B</div>
+                        <div class="chat-body" id="chat-body">
+                            <div class="message system">Iniciando simulación del Juego de la Imitación...</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section class="slide" id="slide-5">
-            <div class="content text-center">
-                <h2 class="animate-up">¿Qué es la Máquina de Turing?</h2>
-                <div class="animate-fade delay-1">
-
-                </div>
-                <p class="animate-up delay-2 max-width-p">Propuesta por Alan Turing en 1936, no es una máquina física,
-                    sino un <strong>modelo matemático y abstracto</strong>. Consiste en una cinta infinita dividida en
-                    celdas, un cabezal de lectura/escritura y un conjunto de reglas. Sentó las bases teóricas de lo que
-                    hoy conocemos como CPU y algoritmos informáticos, demostrando matemáticamente qué es computable y
-                    qué no.</p>
-                <div class="image-box animate-up delay-3 mt-2">
-                    <img src="img/maquina-turing.jpg" alt="Máquina de Turing conceptual">
+            <div class="content">
+                <h2 class="text-center"><i class="fa-solid fa-timeline"></i> Cronología de la IA</h2>
+                <div class="interactive-timeline">
+                    <div class="timeline-nav">
+                        <button class="tl-btn active" data-target="era-1">1950s: El Nacimiento</button>
+                        <button class="tl-btn" data-target="era-2">1970s: El Invierno</button>
+                        <button class="tl-btn" data-target="era-3">1990s: El Resurgimiento</button>
+                        <button class="tl-btn" data-target="era-4">Actualidad: Deep Learning</button>
+                    </div>
+                    
+                    <div class="timeline-content glass-panel">
+                        <div class="tl-panel active" id="era-1">
+                            <h3>Conferencia de Dartmouth (1956)</h3>
+                            <p>John McCarthy, Marvin Minsky, y Claude Shannon se reúnen. Acuñan el término "Inteligencia Artificial". Se crean los primeros programas capaces de jugar damas y resolver teoremas matemáticos (Logic Theorist). Hay un optimismo extremo.</p>
+                        </div>
+                        <div class="tl-panel" id="era-2">
+                            <h3>El Invierno de la IA (1974 - 1980)</h3>
+                            <p>Las promesas no se cumplieron. Las computadoras tenían poca memoria y velocidad para procesar datos complejos. Los gobiernos de EE. UU. y Reino Unido cortan el financiamiento. La investigación entra en crisis y el término "IA" pierde prestigio.</p>
+                        </div>
+                        <div class="tl-panel" id="era-3">
+                            <h3>Sistemas Expertos y Machine Learning (1980 - 2000)</h3>
+                            <p>La IA vuelve a ser útil en las empresas con los "Sistemas Expertos", programados con reglas lógicas complejas (if-then). En 1997, la supercomputadora Deep Blue de IBM derrota al campeón mundial de ajedrez Garry Kasparov, un hito mediático brutal.</p>
+                        </div>
+                        <div class="tl-panel" id="era-4">
+                            <h3>La Revolución de los Datos (2010 - Hoy)</h3>
+                            <p>Gracias al hardware masivo (Tarjetas Gráficas/GPUs) y al Big Data, las <strong>Redes Neuronales Artificiales</strong> explotan. Aparece el Deep Learning. Hoy tenemos Modelos Fundacionales (LLMs), visión computacional avanzada y sistemas autónomos.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section class="slide" id="slide-6">
-            <div class="content grid-layout">
-                <div class="text-box animate-left">
-                    <h2>El Experimento: El Test de Turing (1950)</h2>
-                    <p>Turing se hizo una pregunta clave: <em>"¿Pueden pensar las máquinas?"</em>. Para responder,
-                        diseñó el "Juego de la Imitación".</p>
-                    <div class="card">
-                        <h3>¿En qué consiste?</h3>
-                        <p>Un evaluador humano conversa por texto con dos entidades ocultas: un humano y una máquina. Si
-                            tras 5 minutos de preguntas el evaluador no puede distinguir quién es la máquina y quién el
-                            humano, se dice que la máquina ha pasado el test, demostrando comportamiento inteligente.
-                        </p>
-                    </div>
+            <div class="content text-center glass-panel">
+                <h2 class="animate-up"><i class="fa-solid fa-infinity"></i> El Límite es la Imaginación</h2>
+                <p class="subtitle animate-up delay-1">El sueño matemático de Turing es la realidad ingenieril de hoy.</p>
+                <div class="tech-grid animate-fade delay-2 mt-2">
+                    <div class="tech-item"><i class="fa-solid fa-robot"></i><br>Robótica</div>
+                    <div class="tech-item"><i class="fa-solid fa-eye"></i><br>Visión Artificial</div>
+                    <div class="tech-item"><i class="fa-solid fa-language"></i><br>Procesamiento Natural</div>
+                    <div class="tech-item"><i class="fa-solid fa-shield-virus"></i><br>Ciberseguridad IA</div>
                 </div>
-                <div class="image-box animate-right">
-
-                    <img src="img/turing-test.png" alt="Diagrama del Test de Turing">
-                </div>
-            </div>
-        </section>
-
-        <section class="slide" id="slide-7">
-            <div class="content text-center">
-                <h2 class="animate-up">El Legado Continúa</h2>
-                <p class="subtitle animate-up delay-1">La semilla plantada por Turing hoy está en nuestros teléfonos,
-                    autos y hospitales.</p>
-                <div class="graphic-element animate-fade delay-2">
-                    <img src="img/bg-fin.jpg" alt="Futuro IA" class="hero-img">
-                </div>
-                <p class="instruction animate-fade delay-3">¡Gracias!</p>
+                <button class="btn-start mt-2 animate-up delay-3" onclick="location.reload()">Reiniciar Presentación</button>
             </div>
         </section>
 
         <div class="controls">
-            <button id="btn-prev" aria-label="Anterior">◀</button>
+            <button id="btn-prev" aria-label="Anterior"><i class="fa-solid fa-chevron-left"></i></button>
             <div class="progress-container">
                 <div class="progress-bar" id="progress"></div>
             </div>
-            <button id="btn-next" aria-label="Siguiente">▶</button>
+            <button id="btn-next" aria-label="Siguiente"><i class="fa-solid fa-chevron-right"></i></button>
         </div>
 
     </div>
 
     <script src="js/main.js"></script>
 </body>
-
 </html>

@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Seleccionamos todas las diapositivas y botones
+    // ----------------------------------------------------
+    // 1. SISTEMA DE NAVEGACIÓN DE DIAPOSITIVAS
+    // ----------------------------------------------------
     const slides = document.querySelectorAll(".slide");
     const btnNext = document.getElementById("btn-next");
     const btnPrev = document.getElementById("btn-prev");
@@ -8,47 +10,14 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentSlideIndex = 0;
     const totalSlides = slides.length;
 
-    // Función para actualizar la diapositiva mostrada
-    function updateSlide() {
-        // Quitamos la clase 'active' a todas
-        slides.forEach(slide => {
-            slide.classList.remove("active");
-        });
-
-        // Añadimos 'active' a la diapositiva actual
-        slides[currentSlideIndex].classList.add("active");
-
-        // Actualizamos la barra de progreso
-        const progressPercentage = ((currentSlideIndex) / (totalSlides - 1)) * 100;
-        progressBar.style.width = `${progressPercentage}%`;
-
-        // Gestionamos la visibilidad de los botones
-        if (currentSlideIndex === 0) {
-            btnPrev.style.opacity = "0.3";
-            btnPrev.style.cursor = "default";
-        } else {
-            btnPrev.style.opacity = "1";
-            btnPrev.style.cursor = "pointer";
-        }
-
-        if (currentSlideIndex === totalSlides - 1) {
-            btnNext.style.opacity = "0.3";
-            btnNext.style.cursor = "default";
-        } else {
-            btnNext.style.opacity = "1";
-            btnNext.style.cursor = "pointer";
-        }
-    }
-
-    // Navegar a la siguiente diapositiva
-    function nextSlide() {
+    // Se expone al contexto global para el botón "Iniciar Recorrido"
+    window.nextSlide = () => {
         if (currentSlideIndex < totalSlides - 1) {
             currentSlideIndex++;
             updateSlide();
         }
-    }
+    };
 
-    // Navegar a la diapositiva anterior
     function prevSlide() {
         if (currentSlideIndex > 0) {
             currentSlideIndex--;
@@ -56,39 +25,122 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Event Listeners para los botones
-    btnNext.addEventListener("click", nextSlide);
-    btnPrev.addEventListener("click", prevSlide);
+    function updateSlide() {
+        slides.forEach(slide => slide.classList.remove("active"));
+        slides[currentSlideIndex].classList.add("active");
 
-    // Event Listeners para el teclado (Flechas)
-    document.addEventListener("keydown", (e) => {
-        if (e.key === "ArrowRight" || e.key === "Space") {
-            nextSlide();
-        } else if (e.key === "ArrowLeft") {
-            prevSlide();
+        const progressPercentage = ((currentSlideIndex) / (totalSlides - 1)) * 100;
+        progressBar.style.width = `${progressPercentage}%`;
+
+        btnPrev.style.opacity = currentSlideIndex === 0 ? "0.3" : "1";
+        btnPrev.style.pointerEvents = currentSlideIndex === 0 ? "none" : "auto";
+        btnNext.style.opacity = currentSlideIndex === totalSlides - 1 ? "0.3" : "1";
+        btnNext.style.pointerEvents = currentSlideIndex === totalSlides - 1 ? "none" : "auto";
+
+        // Reiniciar animaciones especiales si es necesario
+        if(currentSlideIndex === 0 && !typewriterDone) {
+            startTypewriter();
         }
-    });
-
-    // Soporte básico para pantallas táctiles (Swipe)
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    document.addEventListener('touchstart', e => {
-        touchStartX = e.changedTouches[0].screenX;
-    });
-
-    document.addEventListener('touchend', e => {
-        touchEndX = e.changedTouches[0].screenX;
-        handleSwipe();
-    });
-
-    function handleSwipe() {
-        // Si desliza a la izquierda
-        if (touchEndX < touchStartX - 50) nextSlide();
-        // Si desliza a la derecha
-        if (touchEndX > touchStartX + 50) prevSlide();
     }
 
-    // Inicializar presentación
+    btnNext.addEventListener("click", window.nextSlide);
+    btnPrev.addEventListener("click", prevSlide);
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "ArrowRight") window.nextSlide();
+        else if (e.key === "ArrowLeft") prevSlide();
+    });
+
+    // ----------------------------------------------------
+    // 2. EFECTO MAQUINA DE ESCRIBIR (TYPEWRITER)
+    // ----------------------------------------------------
+    const titleText = "Historia de la IA & \nLa Máquina de Turing";
+    const titleElement = document.getElementById("typewriter-title");
+    let i = 0;
+    let typewriterDone = false;
+
+    function startTypewriter() {
+        titleElement.innerHTML = "";
+        i = 0;
+        typeWriter();
+    }
+
+    function typeWriter() {
+        if (i < titleText.length) {
+            if(titleText.charAt(i) === '\n'){
+                titleElement.innerHTML += '<br>';
+            } else {
+                titleElement.innerHTML += titleText.charAt(i);
+            }
+            i++;
+            setTimeout(typeWriter, 50); // Velocidad de escritura
+        } else {
+            typewriterDone = true;
+        }
+    }
+    
+    // Iniciar el efecto al cargar
+    setTimeout(startTypewriter, 500);
+
+    // ----------------------------------------------------
+    // 3. INTERACTIVIDAD DE LA LÍNEA DE TIEMPO
+    // ----------------------------------------------------
+    const timelineBtns = document.querySelectorAll('.tl-btn');
+    const timelinePanels = document.querySelectorAll('.tl-panel');
+
+    timelineBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Quitar clase activa a todos los botones y paneles
+            timelineBtns.forEach(b => b.classList.remove('active'));
+            timelinePanels.forEach(p => p.classList.remove('active'));
+
+            // Añadir clase activa al botón presionado y a su panel
+            btn.classList.add('active');
+            const targetId = btn.getAttribute('data-target');
+            document.getElementById(targetId).classList.add('active');
+        });
+    });
+
+    // ----------------------------------------------------
+    // 4. SIMULADOR DEL TEST DE TURING
+    // ----------------------------------------------------
+    let simulationRunning = false;
+    
+    window.startTuringSimulation = () => {
+        if(simulationRunning) return; // Evitar multiples clicks
+        simulationRunning = true;
+
+        const chatBody = document.getElementById('chat-body');
+        chatBody.innerHTML = '<div class="message system">Iniciando protocolo de prueba...</div>';
+
+        const script = [
+            { type: 'evaluator', text: 'Hola, ¿puedes escribir un poema sobre la lluvia?', delay: 1000 },
+            { type: 'entity', text: 'Las gotas caen, el cielo llora, la tierra bebe en esta hora. ¿Te gusta así?', delay: 3500 },
+            { type: 'evaluator', text: 'Nada mal. Ahora dime, ¿qué sientes al ver la lluvia?', delay: 2000 },
+            { type: 'entity', text: 'Como un programa de computadora, no tengo emociones. Pero estadísticamente, la gente la asocia con melancolía.', delay: 4000 },
+            { type: 'system', text: '>> ALERTA: Sujeto B ha revelado su naturaleza no humana. Test Fallido.', delay: 2000 }
+        ];
+
+        let accumulatedDelay = 0;
+
+        script.forEach((msg) => {
+            accumulatedDelay += msg.delay;
+            setTimeout(() => {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = `message ${msg.type}`;
+                msgDiv.textContent = msg.text;
+                chatBody.appendChild(msgDiv);
+                
+                // Auto-scroll al fondo
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+                if (msg === script[script.length - 1]) {
+                    simulationRunning = false; // Permitir reiniciar al final
+                }
+            }, accumulatedDelay);
+        });
+    };
+
+    // Inicialización del estado de los botones
     updateSlide();
 });

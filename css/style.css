@@ -1,144 +1,171 @@
-/* Paleta Ultra-Moderna (Dark Mode) */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Fira+Code:wght@400;600&display=swap');
+
 :root {
-    --bg-base: #09090b;
-    --bg-surface: #18181b;
+    --bg-color: #05050a;
+    --text-main: #f0f0f5;
+    --text-muted: #a0a0b0;
+    --primary: #00e5ff; /* Cyan tecnológico */
+    --primary-glow: rgba(0, 229, 255, 0.4);
+    --secondary: #7000ff; /* Púrpura oscuro */
+    --card-bg: rgba(20, 20, 30, 0.6);
     --border-color: rgba(255, 255, 255, 0.1);
-    --text-primary: #f4f4f5;
-    --text-secondary: #a1a1aa;
-    --accent-blue: #3b82f6;
-    --accent-purple: #8b5cf6;
-    --font-main: 'Inter', sans-serif;
-    --font-code: 'JetBrains Mono', monospace;
-    --ease-fluid: cubic-bezier(0.16, 1, 0.3, 1);
+    --font-text: 'Space Grotesk', sans-serif;
+    --font-code: 'Fira Code', monospace;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: var(--font-main); background-color: var(--bg-base); color: var(--text-primary);
-    overflow: hidden; line-height: 1.6;
+    font-family: var(--font-text);
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    overflow: hidden; /* Ocultamos scroll nativo, usamos botones */
+    line-height: 1.6;
 }
 
-/* Fondo Ambiente Fluido */
-.ambient-background {
-    position: fixed; top: -50%; left: -50%; width: 200%; height: 200%; z-index: -1;
-    background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.08) 0%, transparent 30%);
-    animation: rotateAmbient 30s linear infinite;
+/* Canvas interactivo de fondo */
+#network-canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    z-index: -1;
+    opacity: 0.6;
 }
-@keyframes rotateAmbient { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-.app-container { position: relative; width: 100vw; height: 100vh; }
+/* Contenedor principal de Slides */
+.presentation-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
 
-/* Sistema de Slides con Fluidez Máxima */
 .slide {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    opacity: 0; visibility: hidden; transform: scale(0.95);
-    transition: opacity 0.8s var(--ease-fluid), transform 0.8s var(--ease-fluid), visibility 0.8s;
-    display: flex; align-items: center; justify-content: center; padding: 5vw;
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5% 10%;
+    transform: scale(0.95) translateY(20px);
 }
-.slide.active { opacity: 1; visibility: visible; transform: scale(1); z-index: 10; }
 
-/* Contenedores y Layouts */
-.content-wrapper { width: 100%; max-width: 1300px; display: flex; gap: 4rem; align-items: center; }
-.content-wrapper.vertical { flex-direction: column; text-align: center; }
-.content-wrapper.full-width { flex-direction: column; align-items: flex-start; }
-.grid-split { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; }
+.slide.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1) translateY(0);
+    z-index: 10;
+}
 
-/* Tipografía Avanzada */
-h1 { font-size: 4.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -1px; }
-h2 { font-size: 3rem; font-weight: 600; margin-bottom: 1.5rem; letter-spacing: -0.5px; }
-h3 { font-size: 1.8rem; margin-bottom: 1rem; color: var(--text-primary); }
-p { font-size: 1.15rem; color: var(--text-secondary); margin-bottom: 1.5rem; }
-.gradient-text { background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.badge { display: inline-block; padding: 6px 12px; border-radius: 20px; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: var(--accent-blue); font-size: 0.9rem; font-weight: 600; margin-bottom: 2rem; letter-spacing: 1px; text-transform: uppercase; }
+.content { width: 100%; max-width: 1400px; }
 
-/* Componentes Interactivos */
-/* 1. Acordeón (Turing Info) */
-.info-accordion { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem; }
-.accordion-item h4 { font-size: 1.2rem; color: var(--text-primary); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 10px; }
-.accordion-item h4 i { color: var(--accent-blue); }
-.accordion-item p { font-size: 1rem; border-left: 2px solid var(--border-color); padding-left: 1rem; margin-left: 8px; }
+/* Utilidades de Texto */
+.text-center { text-align: center; }
+.max-w { max-width: 900px; margin: 0 auto; }
+.mt-2 { margin-top: 2rem; }
+.mt-3 { margin-top: 3rem; }
 
-/* 2. Máquina de Turing Visual */
-.turing-machine-simulator { margin: 3rem 0; width: 100%; display: flex; flex-direction: column; align-items: center; }
-.tape-container { position: relative; width: 100%; max-width: 600px; height: 80px; overflow: hidden; display: flex; justify-content: center; align-items: center; }
-.tape { display: flex; gap: 5px; transform: translateX(0); animation: moveTape 4s var(--ease-fluid) infinite alternate; }
-.cell { width: 60px; height: 60px; background: var(--bg-surface); border: 1px solid var(--border-color); display: flex; align-items: center; justify-content: center; font-family: var(--font-code); font-size: 1.5rem; border-radius: 8px; }
-.cell.active-cell { border-color: var(--accent-blue); color: var(--accent-blue); box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); }
-.read-head { position: absolute; bottom: -5px; text-align: center; color: var(--accent-purple); font-weight: bold; font-family: var(--font-code); font-size: 0.8rem; }
-@keyframes moveTape { 0% { transform: translateX(65px); } 100% { transform: translateX(-65px); } }
+h1 { font-size: 5rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1rem; letter-spacing: 2px; }
+h2 { font-size: 3rem; color: var(--primary); margin-bottom: 1.5rem; text-shadow: 0 0 15px var(--primary-glow); }
+h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #fff; }
+p { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 1.5rem; }
 
-/* 3. Caja Matemática (Fórmula Turing) */
-.math-box { background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; padding: 2.5rem; width: 100%; max-width: 900px; text-align: left; }
-.formula { font-size: 1.8rem; text-align: center; margin: 1.5rem 0; } /* MathJax procesará el LaTeX aquí */
-.math-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-family: var(--font-main); font-size: 1rem; color: var(--text-secondary); margin-top: 2rem; }
+/* Layouts */
+.split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+.split-layout.reverse { direction: rtl; }
+.split-layout.reverse > * { direction: ltr; }
+.grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
 
-/* 4. Sistema de Pestañas (Evolución IA) */
-.tabs-container { width: 100%; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; }
-.tabs-nav { display: flex; border-bottom: 1px solid var(--border-color); background: rgba(0,0,0,0.2); }
-.tab-btn { flex: 1; padding: 1.5rem; background: none; border: none; color: var(--text-secondary); font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; position: relative; }
-.tab-btn:hover { color: var(--text-primary); background: rgba(255,255,255,0.02); }
-.tab-btn.active { color: var(--accent-blue); }
-.tab-btn.active::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; background: var(--accent-blue); box-shadow: 0 -2px 10px rgba(59, 130, 246, 0.5); }
-.tabs-content { padding: 3rem; height: 350px; overflow-y: auto; }
-.tab-pane { display: none; opacity: 0; transform: translateY(10px); transition: all 0.4s var(--ease-fluid); }
-.tab-pane.active { display: block; opacity: 1; transform: translateY(0); }
-.tab-pane p { font-size: 1.1rem; margin-bottom: 1rem; }
+/* Tarjetas Informativas y Efecto 3D Base */
+.info-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 2.5rem; border-radius: 16px; backdrop-filter: blur(10px); transition: transform 0.1s ease; transform-style: preserve-3d; }
+.info-card i { font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem; transform: translateZ(30px); display: block; }
+.info-card h3 { transform: translateZ(20px); }
+.info-card p { transform: translateZ(10px); margin-bottom: 0;}
 
-/* 5. Chat UI Moderno (Simulador Turing) */
-.modern-chat { width: 100%; background: #000; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; height: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-.chat-header { padding: 1rem 1.5rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; font-family: var(--font-code); font-size: 0.9rem; color: var(--text-secondary); }
-.status-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 8px #22c55e; }
-.chat-window { flex: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; }
-.msg { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 1rem; line-height: 1.4; animation: popIn 0.3s var(--ease-fluid); }
-.msg.human { align-self: flex-end; background: var(--accent-blue); color: #fff; border-bottom-right-radius: 4px; }
-.msg.ai { align-self: flex-start; background: var(--bg-surface); border: 1px solid var(--border-color); border-bottom-left-radius: 4px; }
-.typing-indicator { align-self: flex-start; background: var(--bg-surface); padding: 12px 16px; border-radius: 16px; display: flex; gap: 4px; border-bottom-left-radius: 4px; border: 1px solid var(--border-color); }
-.typing-indicator span { width: 6px; height: 6px; background: var(--text-secondary); border-radius: 50%; animation: blink 1.4s infinite both; }
-.typing-indicator span:nth-child(2) { animation-delay: 0.2s; } .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-.chat-input-area { padding: 1rem; border-top: 1px solid var(--border-color); display: flex; gap: 10px; }
-.fake-input { flex: 1; background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 20px; padding: 0 1rem; color: var(--text-secondary); }
-.fake-send { width: 40px; height: 40px; border-radius: 50%; background: var(--accent-blue); border: none; color: #fff; display: flex; align-items: center; justify-content: center; }
+/* Elementos visuales específicos */
+.image-frame img, .diagram-img { width: 100%; max-width: 500px; border-radius: 12px; border: 2px solid var(--border-color); box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+.frame-caption { margin-top: 1rem; font-family: var(--font-code); color: var(--primary); font-size: 1rem; }
 
-/* Botones UI Principales */
-.btn-primary { background: var(--text-primary); color: var(--bg-base); border: none; padding: 12px 28px; border-radius: 30px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s var(--ease-fluid); }
-.btn-primary:hover { transform: scale(1.05); background: #fff; box-shadow: 0 10px 20px rgba(255,255,255,0.1); }
+.styled-list { list-style: none; }
+.styled-list li { margin-bottom: 1.5rem; font-size: 1.1rem; padding-left: 2rem; position: relative; color: var(--text-muted); }
+.styled-list li::before { content: '▹'; position: absolute; left: 0; color: var(--primary); font-size: 1.5rem; top: -5px; }
+.styled-list li strong { color: #fff; }
 
-/* Navegación Inferior (Puntos y Flechas) */
-.presentation-nav { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 2rem; background: rgba(24, 24, 27, 0.8); backdrop-filter: blur(12px); padding: 10px 20px; border-radius: 50px; border: 1px solid var(--border-color); z-index: 100; }
-.nav-btn { background: none; border: none; color: var(--text-primary); font-size: 1.2rem; cursor: pointer; transition: all 0.2s; opacity: 0.7; }
-.nav-btn:hover { opacity: 1; transform: scale(1.1); color: var(--accent-blue); }
-.dots-container { display: flex; gap: 10px; }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-secondary); cursor: pointer; transition: all 0.3s; opacity: 0.5; }
-.dot.active { opacity: 1; background: var(--accent-blue); transform: scale(1.5); }
+/* Timeline Grids (Diapositivas 7, 8, 9) */
+.timeline-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 2rem; }
+.timeline-card { background: var(--card-bg); padding: 2rem; border-radius: 12px; border-top: 4px solid var(--border-color); position: relative; }
+.timeline-card .year { position: absolute; top: -25px; left: 20px; background: var(--primary); color: #000; padding: 5px 15px; font-weight: bold; border-radius: 20px; font-family: var(--font-code); }
+.border-neon { border-top-color: var(--primary); box-shadow: inset 0 20px 40px -20px var(--primary-glow); }
 
-/* Sistema de Animaciones Avanzadas (Scroll/Active) */
-.slide .animate-slide-up, .slide .animate-slide-left, .slide .animate-slide-right, .slide .animate-fade { opacity: 0; }
-.slide.active .animate-slide-up { animation: floatUp 1s var(--ease-fluid) forwards; }
-.slide.active .animate-slide-left { animation: floatLeft 1s var(--ease-fluid) forwards; }
-.slide.active .animate-slide-right { animation: floatRight 1s var(--ease-fluid) forwards; }
-.slide.active .animate-fade { animation: fadeIn 1s var(--ease-fluid) forwards; }
+/* Cajas de Alerta/Info */
+.highlight-box { background: rgba(0, 229, 255, 0.05); border-left: 4px solid var(--primary); padding: 1.5rem; font-style: italic; font-size: 1.1rem; }
+.highlight-box i { color: var(--primary); margin-bottom: 10px; font-size: 1.5rem; display: block;}
+.danger-box { background: rgba(255, 50, 50, 0.1); border: 1px solid rgba(255, 50, 50, 0.3); padding: 2rem; border-radius: 12px; }
+.danger-box h3 { color: #ff5555; }
+.success-box { background: rgba(50, 255, 100, 0.1); border: 1px solid rgba(50, 255, 100, 0.3); padding: 2rem; border-radius: 12px; }
+.success-box h3 { color: #55ff77; }
 
-.delay-1 { animation-delay: 0.2s !important; }
-.delay-2 { animation-delay: 0.4s !important; }
-.delay-3 { animation-delay: 0.6s !important; }
+/* Simulador Máquina Turing Visual */
+.tape-ui { display: flex; flex-direction: column; align-items: center; margin: 2rem 0; }
+.tape-track { display: flex; gap: 5px; border-top: 2px solid var(--primary); border-bottom: 2px solid var(--primary); padding: 10px 0; }
+.tape-track span { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-family: var(--font-code); font-size: 1.5rem; background: #111; border: 1px solid #333; }
+.highlight-cell { background: rgba(0, 229, 255, 0.2) !important; border-color: var(--primary) !important; color: var(--primary); box-shadow: 0 0 15px var(--primary-glow); }
+.head-ui { margin-top: 10px; text-align: center; color: var(--primary); font-family: var(--font-code); font-size: 0.9rem; animation: floatHead 2s infinite ease-in-out; }
 
-@keyframes floatUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes floatLeft { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes floatRight { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes popIn { 0% { opacity: 0; transform: scale(0.9) translateY(10px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-@keyframes blink { 0%, 100% { opacity: 0.2; } 20% { opacity: 1; } }
+/* Matemáticas */
+.math-container { background: #0a0a0f; border: 1px solid var(--border-color); padding: 2rem; border-radius: 12px; display: inline-block; margin-top: 2rem; }
+.formula-box { font-size: 2rem; color: #fff; margin: 1.5rem 0; }
+.math-desc { font-size: 1rem; color: #888; margin-bottom: 0;}
 
-/* Imágenes */
-.image-showcase img { width: 100%; max-width: 400px; border-radius: 16px; object-fit: cover; filter: grayscale(50%) contrast(120%); transition: filter 0.5s; border: 1px solid var(--border-color); }
-.image-showcase img:hover { filter: grayscale(0%) contrast(100%); }
+/* Chat Terminal */
+.terminal-container { max-width: 800px; margin: 0 auto; }
+.chat-interface { background: #0a0a0f; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; height: 400px; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
+.chat-header { background: #111; padding: 15px; text-align: center; font-family: var(--font-code); font-size: 0.9rem; border-bottom: 1px solid #222; color: #55ff77; }
+.chat-history { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.msg-bubble { max-width: 80%; padding: 10px 15px; border-radius: 8px; font-family: var(--font-text); font-size: 1rem; animation: slideInChat 0.3s ease forwards; }
+.msg-bubble.judge { align-self: flex-end; background: var(--primary); color: #000; border-bottom-right-radius: 0; }
+.msg-bubble.entity { align-self: flex-start; background: #222; color: #fff; border-bottom-left-radius: 0; border: 1px solid #444; }
+.chat-controls { padding: 15px; border-top: 1px solid #222; display: flex; justify-content: center; background: #05050a; }
+.btn-cyber { background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 10px 20px; font-family: var(--font-code); cursor: pointer; transition: all 0.3s; text-transform: uppercase; font-weight: bold; display: flex; gap: 10px; align-items: center; }
+.btn-cyber:hover { background: var(--primary); color: #000; box-shadow: 0 0 15px var(--primary-glow); }
+
+/* Controles Inferiores */
+.presentation-controls { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 2rem; background: rgba(10, 10, 15, 0.8); backdrop-filter: blur(10px); padding: 10px 30px; border-radius: 50px; border: 1px solid var(--border-color); z-index: 100; }
+.control-btn { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; transition: color 0.3s, transform 0.2s; }
+.control-btn:hover { color: var(--primary); transform: scale(1.2); }
+.slide-counter { font-family: var(--font-code); font-size: 1.2rem; font-weight: bold; width: 60px; text-align: center; }
+
+/* Animaciones y Clases Utilitarias */
+.slide .reveal-up { opacity: 0; transform: translateY(40px); transition: all 0.8s ease; }
+.slide .reveal-left { opacity: 0; transform: translateX(-40px); transition: all 0.8s ease; }
+.slide .reveal-right { opacity: 0; transform: translateX(40px); transition: all 0.8s ease; }
+
+/* Solo se animan cuando la slide es activa */
+.slide.active .reveal-up { opacity: 1; transform: translateY(0); }
+.slide.active .reveal-left { opacity: 1; transform: translateX(0); }
+.slide.active .reveal-right { opacity: 1; transform: translateX(0); }
+
+.delay-1 { transition-delay: 0.2s !important; }
+.delay-2 { transition-delay: 0.4s !important; }
+.delay-3 { transition-delay: 0.6s !important; }
+
+@keyframes floatHead { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes slideInChat { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Glitch Effect para Títulos */
+.glitch-text { position: relative; color: white; display: inline-block; }
+.glitch-text::before, .glitch-text::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8; }
+.glitch-text::before { left: 2px; text-shadow: -2px 0 red; clip: rect(24px, 550px, 90px, 0); animation: glitch-anim 3s infinite linear alternate-reverse; }
+.glitch-text::after { left: -2px; text-shadow: -2px 0 blue; clip: rect(85px, 550px, 140px, 0); animation: glitch-anim 2.5s infinite linear alternate-reverse; }
+@keyframes glitch-anim { 0% { clip: rect(10px, 9999px, 80px, 0); } 20% { clip: rect(60px, 9999px, 20px, 0); } 40% { clip: rect(30px, 9999px, 70px, 0); } 60% { clip: rect(80px, 9999px, 10px, 0); } 80% { clip: rect(20px, 9999px, 50px, 0); } 100% { clip: rect(50px, 9999px, 30px, 0); } }
 
 /* Responsive Grid */
-@media (max-width: 1024px) {
-    .content-wrapper, .grid-split { flex-direction: column; text-align: center; }
-    h1 { font-size: 3rem; }
-    .math-grid { grid-template-columns: 1fr; }
-    .tabs-nav { flex-wrap: wrap; }
-    .tab-btn { flex: 1 1 50%; font-size: 1rem; padding: 1rem; }
+@media (max-width: 1100px) {
+    .split-layout, .grid-2x2, .timeline-grid { grid-template-columns: 1fr; text-align: center; gap: 2rem; }
+    .split-layout.reverse { direction: ltr; }
+    h1 { font-size: 3rem; } h2 { font-size: 2rem; }
+    .timeline-card .year { position: relative; top: 0; left: 0; display: inline-block; margin-bottom: 10px; }
 }

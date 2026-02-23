@@ -57,13 +57,13 @@
                     <ul class="styled-list">
                         <li><strong>La Máquina Enigma y la Bombe:</strong> Durante la Segunda Guerra Mundial, Turing lideró el equipo en Bletchley Park. Diseñó la "Bombe", un dispositivo electromecánico que, mediante procesos lógicos de descarte, logró descifrar los mensajes secretos del ejército nazi. Se estima que su invención salvó más de 14 millones de vidas.</li>
                         <li><strong>Visión de Máquinas Pensantes:</strong> Mientras otros veían a las máquinas como simples calculadoras gigantes, Turing fue el primero en proponer que si una máquina podía manipular símbolos matemáticos (1 y 0), también podría procesar lógica, texto y, eventualmente, simular el pensamiento humano.</li>
-                        <li><strong>Muerte Prematura:</strong> A pesar de ser un héroe, fue condenado en 1952 por ser homosexual. Fue sometido a castración química y murió a los 41 años tras morder una manzana con cianuro.</li>
+                        <li><strong>Muerte Prematura:</strong> A pesar de ser un héroe, fue condenado en 1952 por ser homosexual. Murió a los 41 años tras morder una manzana con cianuro.</li>
                     </ul>
                 </div>
                 <div class="right-pane text-center reveal-left">
                     <div class="image-frame 3d-card">
                         <img src="img/turing.jpg" alt="Alan Turing">
-                        <div class="frame-caption">Turing sentó las bases lógicas de los algoritmos modernos.</div>
+                        <div class="frame-caption">Turing sentó las bases lógicas de los algoritmos.</div>
                     </div>
                 </div>
             </div>
@@ -71,25 +71,28 @@
 
         <section class="slide" id="slide-4">
             <div class="content text-center">
-                <h2 class="reveal-up">La Máquina de Turing (1936)</h2>
-                <p class="max-w reveal-up delay-1">En su ensayo "Sobre los números computables", Turing quería demostrar qué problemas matemáticos podían resolverse paso a paso. Para ello inventó un <strong>modelo teórico</strong> (no una máquina física). Imaginemos una cinta infinita dividida en casillas. Un cabezal se mueve por la cinta leyendo, borrando o escribiendo símbolos (como 0 y 1), siguiendo un libro de reglas predefinido.</p>
-                <p class="max-w reveal-up delay-1"><strong>La importancia:</strong> Turing demostró que cualquier algoritmo informático, por complejo que sea, puede ser ejecutado por este modelo simple. Acababa de inventar el concepto del "Software".</p>
+                <h2 class="reveal-up">La Máquina de Turing (1936): El Primer Software</h2>
+                <p class="max-w reveal-up delay-1">Para entenderlo a nivel de ingeniería, Turing diseñó teóricamente lo que hoy conocemos como la <strong>Arquitectura de Computadoras</strong>. Imaginemos sus tres componentes principales:</p>
+                <p class="max-w reveal-up delay-1" style="text-align: left; display: inline-block;">
+                1. <strong>La Cinta Infinita:</strong> Funciona como la Memoria RAM. Almacena los datos en ceros y unos.<br>
+                2. <strong>El Cabezal de Lectura/Escritura:</strong> Funciona como la CPU. Lee un dato de la cinta, lo procesa y escribe un resultado.<br>
+                3. <strong>La Tabla de Reglas:</strong> Es el Código o Algoritmo preprogramado.</p>
                 
                 <div class="turing-diagram reveal-up delay-2">
                     <div class="tape-ui">
                         <div class="tape-track">
                             <span>1</span><span>0</span><span>1</span><span class="highlight-cell">0</span><span>1</span><span>1</span>
                         </div>
-                        <div class="head-ui"><i class="fa-solid fa-arrow-up"></i><br>Cabezal L/E</div>
+                        <div class="head-ui"><i class="fa-solid fa-arrow-up"></i><br>Cabezal L/E (CPU)</div>
                     </div>
                 </div>
 
                 <div class="math-container reveal-up delay-3">
-                    <h3>El Modelo Lógico-Matemático</h3>
+                    <h3>El Modelo Lógico-Matemático Traducido</h3>
                     <div class="formula-box">
                         $$M = \langle Q, \Gamma, b, \Sigma, \delta, q_0, F \rangle$$
                     </div>
-                    <p class="math-desc">En ingeniería, esto se resume en: Un programa tiene <strong>Estados (Q)</strong>, lee <strong>Datos de entrada (Σ)</strong> de la memoria, y usa una <strong>Lógica de transición (δ)</strong> para saber qué acción tomar a continuación.</p>
+                    <p class="math-desc">En programación moderna, esta tupla se traduce así: <strong>Q</strong> son las variables de estado en memoria, <strong>Σ (Sigma)</strong> son los <i>Inputs</i> del usuario, y <strong>δ (Delta)</strong> es la función de transición (las estructuras de control como los <i>IF/ELSE</i> o bucles <i>WHILE</i> que le dicen a la máquina qué hacer según el dato leído).</p>
                 </div>
             </div>
         </section>
@@ -114,10 +117,10 @@
         <section class="slide" id="slide-6">
             <div class="content terminal-container reveal-up">
                 <h2><i class="fa-solid fa-terminal"></i> Simulador: El Juego de la Imitación</h2>
-                <p class="text-center">Prueba interactiva del protocolo de Turing. Observa el flujo de comunicación de la terminal.</p>
+                <p class="text-center" style="max-width: 700px; margin: 0 auto 1.5rem auto;">En esta prueba interactiva evaluaremos dos factores clave: <strong>Coherencia Semántica</strong> (entender el significado profundo de la pregunta) y <strong>Empatía Simulada</strong>. Un sistema obsoleto respondería con patrones fijos, pero un modelo avanzado intenta emular el tiempo de razonamiento y el peso emocional de la respuesta. Observa el flujo.</p>
                 
                 <div class="chat-interface">
-                    <div class="chat-header">Conexión Segura - Sujeto A (Juez) y Sujeto B (Entidad)</div>
+                    <div class="chat-header">Conexión Segura - Sujeto A (Juez Evaluador) y Sujeto B (Entidad)</div>
                     <div class="chat-history" id="chat-history">
                         </div>
                     <div class="chat-controls">

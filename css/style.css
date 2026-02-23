@@ -39,6 +39,7 @@ body {
     position: relative;
 }
 
+/* AQUÍ ESTÁ EL ARREGLO DEL SCROLL PARA QUE NO TAPE NADA */
 .slide {
     position: absolute;
     top: 0; left: 0;
@@ -47,10 +48,14 @@ body {
     visibility: hidden;
     transition: opacity 0.6s ease, transform 0.6s ease;
     display: flex;
+    flex-direction: column; /* Organiza de arriba hacia abajo */
     align-items: center;
-    justify-content: center;
-    padding: 5% 10%;
+    justify-content: flex-start; /* Empieza desde arriba */
+    padding: 5% 10% 120px 10%; /* El 120px abajo protege del menú negro */
     transform: scale(0.95) translateY(20px);
+    overflow-y: auto; /* Permite hacer scroll si hay mucho texto */
+    scrollbar-width: thin; /* Barras de scroll elegantes */
+    scrollbar-color: var(--primary) transparent;
 }
 
 .slide.active {
@@ -60,7 +65,12 @@ body {
     z-index: 10;
 }
 
-.content { width: 100%; max-width: 1400px; }
+/* Centrado automático cuando el contenido es poco */
+.content { 
+    margin: auto 0; 
+    width: 100%; 
+    max-width: 1400px; 
+}
 
 /* Utilidades de Texto */
 .text-center { text-align: center; }

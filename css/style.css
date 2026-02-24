@@ -95,11 +95,27 @@ p { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 1.5rem; }
 .msg-bubble.entity { align-self: flex-start; background: #222; color: #fff; border: 1px solid #444; }
 .chat-controls { padding: 15px; display: flex; justify-content: center; background: #05050a; }
 
-/* Controles Base */
-.presentation-controls { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 2rem; background: rgba(10, 10, 15, 0.8); backdrop-filter: blur(10px); padding: 10px 30px; border-radius: 50px; border: 1px solid var(--border-color); z-index: 100; }
+/* =========================================================
+   CONTROLES BASE Y ARREGLO DEL "1 / 10"
+   ========================================================= */
+.presentation-controls { 
+    position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); 
+    display: flex; align-items: center; gap: 2rem; flex-wrap: nowrap; /* Evita que se rompa la línea */
+    background: rgba(10, 10, 15, 0.8); backdrop-filter: blur(10px); 
+    padding: 10px 30px; border-radius: 50px; border: 1px solid var(--border-color); z-index: 100; 
+}
 .control-btn { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; transition: color 0.3s; }
 .control-btn:hover { color: var(--primary); }
-.slide-counter { font-family: var(--font-code); font-size: 1.2rem; font-weight: bold; width: 60px; text-align: center; }
+
+/* LA SOLUCIÓN DEL CONTADOR PARA QUE QUEDE EN UNA SOLA LÍNEA SÍ O SÍ */
+.slide-counter { 
+    font-family: var(--font-code); 
+    font-size: 1.2rem; 
+    font-weight: bold; 
+    min-width: 80px; /* Le da el espacio suficiente */
+    white-space: nowrap; /* ESTO IMPIDE QUE SE PASE A LA LÍNEA DE ABAJO */
+    text-align: center; 
+}
 
 
 /* --- OVERLAY DEL TEST --- */

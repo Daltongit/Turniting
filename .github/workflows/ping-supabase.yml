@@ -1,0 +1,16 @@
+name: Ping Supabase Keep-Alive
+
+on:
+  schedule:
+    - cron: '0 0 */3 * *' # Se ejecuta cada 3 días a la medianoche
+  workflow_dispatch: # Permite ejecutarlo manualmente desde GitHub si quieres probar
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Hacer Ping a Supabase
+        run: |
+          curl -X GET 'https://osriruqcnxshmkvdhijw.supabase.co/rest/v1/keep_alive_ping?select=*' \
+          -H 'apikey: sb_publishable_9-dt8ZHtX3uAQtb4vMPKGQ__34i08qS' \
+          -H 'Authorization: Bearer sb_publishable_9-dt8ZHtX3uAQtb4vMPKGQ__34i08qS'

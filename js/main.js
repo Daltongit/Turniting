@@ -1,9 +1,80 @@
+// =========================================================================
+// 1. INICIALIZAR SUPABASE (Conectado a tu proyecto real)
+// =========================================================================
+const supabaseUrl = 'https://osriruqcnxshmkvdhijw.supabase.co';
+const supabaseKey = 'sb_publishable_9-dt8ZHtX3uAQtb4vMPKGQ__34i08qS';
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
+
+// =========================================================================
+// 2. FUNCIONES GLOBALES PARA EL HTML (A prueba de bloqueos)
+// =========================================================================
+window.simRunning = false;
+
+window.iniciarSimulador = async function() {
+    if(window.simRunning) return; 
+    window.simRunning = true;
+    
+    const btnRunSim = document.getElementById('btn-run-sim'); 
+    const chatHistory = document.getElementById('chat-history');
+    
+    if(!chatHistory || !btnRunSim) return;
+
+    chatHistory.innerHTML = ""; 
+    btnRunSim.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Ejecutando...';
+    
+    const msgs = [
+        { r: 'judge', t: "Juez: Pregunta 1. ¿Si te doy una matriz de 3x3 de ceros, cuál es su determinante?", d: 1000 },
+        { r: 'entity', t: "Sujeto B: Cero. Cualquier matriz con una fila o columna de ceros tiene determinante cero. ¿Era una trampa?", d: 3500 },
+        { r: 'judge', t: "Juez: Correcto. Pregunta 2. ¿Qué te hace sentir triste?", d: 2000 },
+        { r: 'entity', t: "Sujeto B: Ver a mis seres queridos sufrir y no poder evitarlo.", d: 4500 },
+        { r: 'judge', t: "Juez: Respuesta muy humana. Pausando protocolo...", d: 2000 }
+    ];
+    
+    for (let i = 0; i < msgs.length; i++) {
+        const typing = document.createElement('div'); 
+        typing.className = `msg-bubble ${msgs[i].r}`; 
+        typing.innerHTML = '<i class="fa-solid fa-ellipsis fa-fade"></i>'; 
+        chatHistory.appendChild(typing); 
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+        
+        await new Promise(r => setTimeout(r, msgs[i].d));
+        
+        chatHistory.removeChild(typing); 
+        const real = document.createElement('div'); 
+        real.className = `msg-bubble ${msgs[i].r}`; 
+        real.textContent = msgs[i].t; 
+        chatHistory.appendChild(real); 
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+    btnRunSim.innerHTML = '<i class="fa-solid fa-play"></i> EJECUTAR SIMULACIÓN'; 
+    window.simRunning = false;
+};
+
+window.mostrarPantallaJuego = function(screenId) {
+    const gameScreens = document.querySelectorAll('.game-screen');
+    gameScreens.forEach(s => s.classList.remove('active-game-screen'));
+    setTimeout(() => { document.getElementById(screenId).classList.add('active-game-screen'); }, 50);
+};
+
+window.abrirTest = function() {
+    document.getElementById('game-overlay-wrapper').classList.remove('hidden');
+    window.mostrarPantallaJuego('test-lobby-screen');
+};
+
+window.cerrarTest = function() {
+    document.getElementById('game-overlay-wrapper').classList.add('hidden');
+    if(typeof window.limpiarTodo === 'function') window.limpiarTodo();
+};
+
+
+// =========================================================================
+// 3. LÓGICA PRINCIPAL AL CARGAR LA PÁGINA
+// =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
 
     try {
-        // ==========================================
-        // 1. NAVEGACIÓN DE DIAPOSITIVAS Y FLECHAS
-        // ==========================================
+        // --- A. NAVEGACIÓN DE DIAPOSITIVAS ---
         const slides = document.querySelectorAll('.slide');
         const btnNext = document.getElementById('next-btn');
         const btnPrev = document.getElementById('prev-btn');
@@ -12,234 +83,196 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function updateSlides() {
             if (!slides.length) return;
-            
-            // Ocultar todas y mostrar la actual
             slides.forEach((slide, index) => {
                 slide.classList.remove('active');
                 if (index === currentSlide) slide.classList.add('active');
             });
-            
-            // Actualizar texto del contador sin que se rompa
-            if (counter) {
-                counter.innerText = (currentSlide + 1) + " / " + slides.length;
-            }
-            
-            // Opacidad de botones
-            if (btnPrev) {
-                btnPrev.style.opacity = currentSlide === 0 ? "0.3" : "1";
-            }
-            if (btnNext) {
-                btnNext.style.opacity = currentSlide === slides.length - 1 ? "0.3" : "1";
-            }
+            if (counter) counter.innerText = (currentSlide + 1) + " / " + slides.length;
+            if (btnPrev) btnPrev.style.opacity = currentSlide === 0 ? "0.3" : "1";
+            if (btnNext) btnNext.style.opacity = currentSlide === slides.length - 1 ? "0.3" : "1";
         }
 
-        // EVENTOS DE LOS BOTONES INFERIORES (FLECHAS)
-        if (btnNext) {
-            btnNext.addEventListener('click', () => {
-                if (currentSlide < slides.length - 1) { currentSlide++; updateSlides(); }
-            });
-        }
-        if (btnPrev) {
-            btnPrev.addEventListener('click', () => {
-                if (currentSlide > 0) { currentSlide--; updateSlides(); }
-            });
-        }
-
-        // FLECHAS DEL TECLADO
+        if (btnNext) btnNext.addEventListener('click', () => { if (currentSlide < slides.length - 1) { currentSlide++; updateSlides(); } });
+        if (btnPrev) btnPrev.addEventListener('click', () => { if (currentSlide > 0) { currentSlide--; updateSlides(); } });
         document.addEventListener('keydown', (e) => {
             const overlay = document.getElementById('game-overlay-wrapper');
-            // Solo avanza si el test está cerrado
             if (!overlay || overlay.classList.contains('hidden')) {
-                if (e.key === 'ArrowRight' || e.key === 'Space') { 
-                    if (currentSlide < slides.length - 1) { currentSlide++; updateSlides(); } 
-                }
-                if (e.key === 'ArrowLeft') { 
-                    if (currentSlide > 0) { currentSlide--; updateSlides(); } 
-                }
+                if (e.key === 'ArrowRight' || e.key === 'Space') { if (currentSlide < slides.length - 1) { currentSlide++; updateSlides(); } }
+                if (e.key === 'ArrowLeft') { if (currentSlide > 0) { currentSlide--; updateSlides(); } }
             }
         });
-
-        // Iniciar estado
         updateSlides();
 
-
-        // ==========================================
-        // 2. SIMULADOR DEL CHAT (Slide 6)
-        // ==========================================
-        const btnRunSim = document.getElementById('btn-run-sim');
-        let simRunning = false;
-
-        if (btnRunSim) {
-            btnRunSim.addEventListener('click', async () => {
-                if (simRunning) return; 
-                simRunning = true;
-                
-                const chatHistory = document.getElementById('chat-history');
-                if (!chatHistory) return;
-
-                chatHistory.innerHTML = ""; 
-                btnRunSim.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Ejecutando...';
-                
-                const msgs = [
-                    { r: 'judge', t: "Juez: Pregunta 1. ¿Si te doy una matriz de 3x3 de ceros, cuál es su determinante?", d: 1000 },
-                    { r: 'entity', t: "Sujeto B: Cero. Cualquier matriz con una fila o columna de ceros tiene determinante cero. ¿Era una trampa?", d: 3500 },
-                    { r: 'judge', t: "Juez: Correcto. Pregunta 2. ¿Qué te hace sentir triste?", d: 2000 },
-                    { r: 'entity', t: "Sujeto B: Ver a mis seres queridos sufrir y no poder evitarlo.", d: 4500 },
-                    { r: 'judge', t: "Juez: Respuesta muy humana. Pausando protocolo...", d: 2000 }
-                ];
-                
-                for (let i = 0; i < msgs.length; i++) {
-                    const typing = document.createElement('div'); 
-                    typing.className = `msg-bubble ${msgs[i].r}`; 
-                    typing.innerHTML = '<i class="fa-solid fa-ellipsis fa-fade"></i>'; 
-                    chatHistory.appendChild(typing); 
-                    chatHistory.scrollTop = chatHistory.scrollHeight;
-                    
-                    await new Promise(resolve => setTimeout(resolve, msgs[i].d));
-                    
-                    chatHistory.removeChild(typing); 
-                    const real = document.createElement('div'); 
-                    real.className = `msg-bubble ${msgs[i].r}`; 
-                    real.textContent = msgs[i].t; 
-                    chatHistory.appendChild(real); 
-                    chatHistory.scrollTop = chatHistory.scrollHeight;
-                }
-                btnRunSim.innerHTML = '<i class="fa-solid fa-play"></i> EJECUTAR SIMULACIÓN'; 
-                simRunning = false;
+        // Efecto 3D en Tarjetas
+        const cards3D = document.querySelectorAll('.3d-card');
+        cards3D.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+                card.style.transform = `perspective(1000px) rotateX(${((y - rect.height/2) / (rect.height/2)) * -10}deg) rotateY(${((x - rect.width/2) / (rect.width/2)) * 10}deg) scale3d(1.05, 1.05, 1.05)`;
             });
-        }
+            card.addEventListener('mouseleave', () => { card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`; });
+        });
 
 
-        // ==========================================
-        // 3. ABRIR Y CERRAR EL TEST INTERACTIVO
-        // ==========================================
-        const btnOpenTest = document.getElementById('btn-open-test');
-        const btnCloseTest = document.getElementById('btn-close-test');
-        const gameOverlay = document.getElementById('game-overlay-wrapper');
-
-        function showGameScreen(screenId) {
-            const gameScreens = document.querySelectorAll('.game-screen');
-            gameScreens.forEach(s => s.classList.remove('active-game-screen'));
-            setTimeout(() => { 
-                const target = document.getElementById(screenId);
-                if(target) target.classList.add('active-game-screen'); 
-            }, 50);
-        }
-
-        if (btnOpenTest) {
-            btnOpenTest.addEventListener('click', () => {
-                if(gameOverlay) {
-                    gameOverlay.classList.remove('hidden');
-                    showGameScreen('test-lobby-screen');
-                }
-            });
-        }
-
-        if (btnCloseTest) {
-            btnCloseTest.addEventListener('click', () => {
-                if(gameOverlay) gameOverlay.classList.add('hidden');
-                resetGame(); 
-                resetLobby();
-            });
-        }
-
-
-        // ==========================================
-        // 4. LÓGICA DEL JUEGO (LOBBY Y PREGUNTAS)
-        // ==========================================
+        // --- B. SISTEMA MULTIJUGADOR (SUPABASE REALTIME) ---
+        // Las 50 preguntas exactas sobre la exposición
         const questionPool = [
             { q: "A nivel de software, ¿qué es la IA moderna?", options: ["Una mente consciente artificial", "Modelos probabilísticos que aprenden de datos", "Instrucciones rígidas paso a paso", "Un cerebro biológico simulado"], a: 1 },
             { q: "¿Qué tipo de IA es la única que existe realmente hoy en día?", options: ["IA General (AGI)", "Superinteligencia", "IA Estrecha (ANI)", "IA Consciente"], a: 2 },
-            { q: "¿Qué define a una IA General (AGI)?", options: ["Jugar ajedrez", "Capacidad cognitiva humana completa", "Reconocer rostros", "Crear videos"], a: 1 },
-            { q: "¿Qué dispositivo descifró el código Enigma en la 2da Guerra Mundial?", options: ["El Perceptrón", "La máquina Bombe", "Deep Blue", "ENIAC"], a: 1 },
-            { q: "¿Qué propuso Alan Turing sobre las máquinas?", options: ["Que tendrían sentimientos", "Que podían manipular símbolos y procesar lógica", "Que volarían", "Que destruirían el mundo"], a: 1 },
-            { q: "La 'Cinta Infinita' en la Máquina de Turing equivale hoy a:", options: ["El disco duro", "La Memoria RAM", "La tarjeta gráfica", "El procesador"], a: 1 },
-            { q: "El 'Cabezal de Lectura/Escritura' equivale a:", options: ["La CPU", "El monitor", "El teclado", "La fuente de poder"], a: 0 },
-            { q: "En la tupla de Turing, ¿qué representa δ (Delta)?", options: ["Los datos", "Los estados", "La función de transición (Lógica IF/ELSE)", "El alfabeto"], a: 2 },
-            { q: "¿Cuál era el objetivo del 'Juego de la Imitación'?", options: ["Un juego de mesa", "Evadir la pregunta de si las máquinas piensan", "Aprender a escribir", "Vender computadoras"], a: 1 },
-            { q: "¿Qué se evalúa en el Test de Turing?", options: ["La velocidad de internet", "Si un evaluador puede distinguir a la máquina de un humano", "El consumo eléctrico", "La memoria"], a: 1 },
-            { q: "¿Cuál es la crítica de la 'Habitación China'?", options: ["Las máquinas son lentas", "Simular respuestas perfectas no significa comprenderlas", "El chino es muy difícil", "Turing se equivocó"], a: 1 },
-            { q: "¿Qué evento en 1956 bautizó a la IA?", options: ["Lanzamiento de Apple", "La Conferencia de Dartmouth", "Fin de la guerra", "Lanzamiento de Windows"], a: 1 },
-            { q: "¿Qué era el 'Perceptrón' (1958)?", options: ["Un robot", "Algoritmo inspirado en neuronas biológicas", "Un antivirus", "Una supercomputadora"], a: 1 },
-            { q: "¿Cómo funcionaba ELIZA, el primer chatbot?", options: ["Tenía conciencia", "Buscaba palabras clave y devolvía preguntas", "Estaba conectado a Google", "Hablaba por voz"], a: 1 },
-            { q: "¿Qué caracterizó a los 'Sistemas Expertos' de los 80s?", options: ["Aprendían viendo videos", "Tenían miles de reglas fijas (SI pasa A, ENTONCES B)", "Eran baratos", "Usaban GPUs"], a: 1 },
-            { q: "¿Por qué ocurrió el 'Invierno de la IA'?", options: ["Costos altos de mantenimiento y falta de potencia computacional", "Un virus mundial", "Falta de electricidad", "Nadie quería usarla"], a: 0 },
-            { q: "¿Qué dos factores impulsaron el boom actual del Deep Learning?", options: ["Fibra óptica y teclados", "Big Data (Datos masivos) y potencia de las GPUs", "Satélites", "Nuevos lenguajes"], a: 1 },
-            { q: "¿Qué logró la red neuronal AlexNet en 2012?", options: ["Jugar póker", "Reconocer imágenes con precisión récord", "Traducir textos", "Manejar un auto"], a: 1 },
-            { q: "¿Cómo aprendió AlphaGo a jugar 'Go'?", options: ["Leyendo libros", "Jugando millones de partidas contra sí mismo", "Hackeando", "Con reglas fijas"], a: 1 },
-            { q: "¿Qué innovación introdujo el paper 'Attention Is All You Need'?", options: ["La arquitectura Transformer", "Las memorias USB", "Pantallas 4K", "Procesadores cuánticos"], a: 0 },
-            { q: "¿Qué permiten hacer los Transformers (como Gemini)?", options: ["Imprimir en 3D", "Procesar texto entendiendo todo el contexto de una frase", "Ahorrar batería", "Minería de Bitcoin"], a: 1 },
-            { q: "¿Qué es el problema de la 'Caja Negra' en IA?", options: ["Falla de hardware", "Que el proceso de decisión de la red neuronal es incomprensible", "La computadora se apaga", "Pérdida de datos"], a: 1 },
-            { q: "¿Cuál es un gran desafío actual en ingeniería de IA?", options: ["Hacerla más rápida", "Que hereda sesgos de los datos y necesita auditoría", "El tamaño del código", "Que hable más fuerte"], a: 1 },
-            { q: "Alan Turing murió en el año:", options: ["1980", "1954", "2000", "1945"], a: 1 },
-            { q: "La máquina Bombe fue crucial en la:", options: ["1ra Guerra Mundial", "Guerra Fría", "2da Guerra Mundial", "Guerra de Vietnam"], a: 2 },
-            { q: "La cinta de la máquina de Turing se consideraba:", options: ["Corta", "Infinita", "Circular", "Virtual"], a: 1 },
-            { q: "En la máquina de Turing, Q representa:", options: ["Queso", "Quantums", "Variables de estado", "Velocidad"], a: 2 },
-            { q: "El test de Turing originalmente se probaba mediante:", options: ["Voz", "Texto escrito", "Video", "Presencialmente"], a: 1 },
-            { q: "El optimismo sobre la IA ocurrió principalmente en:", options: ["1990-2000", "Años 50s y 60s", "2010-2020", "1920-1930"], a: 1 },
-            { q: "Marvin Minsky y John McCarthy fueron figuras clave en:", options: ["La creación de Apple", "La Conferencia de Dartmouth", "La Máquina de Turing", "AlphaGo"], a: 1 },
-            { q: "El algoritmo del Perceptrón estaba limitado a:", options: ["Problemas matemáticos complejos", "Problemas lineales muy simples", "Procesar videos", "Generar imágenes"], a: 1 },
-            { q: "El primer invierno de la IA fue causado por:", options: ["Expectativas irreales y límites de hardware", "Falta de interés", "Leyes del gobierno", "Internet lento"], a: 0 },
-            { q: "Los Sistemas Expertos se usaron mucho en:", options: ["Videojuegos", "Medicina y empresas corporativas", "Celulares", "Autos autónomos"], a: 1 },
-            { q: "El entrenamiento de AlphaGo se conoce como:", options: ["Aprendizaje Supervisado", "Aprendizaje por Refuerzo", "Programación Lineal", "Sistemas Expertos"], a: 1 },
-            { q: "Las siglas LLM significan:", options: ["Large Language Model", "Low Level Machine", "Logic Language Method", "Linear Logic Model"], a: 0 },
-            { q: "El Deep Learning está basado en:", options: ["Reglas SI/ENTONCES", "Redes Neuronales Profundas (Múltiples capas)", "Árboles de decisión", "Bases de datos relacionales"], a: 1 },
-            { q: "El principal combustible del Deep Learning es:", options: ["El código", "Big Data", "Las pantallas", "Los algoritmos simples"], a: 1 },
-            { q: "Una GPU es mejor para IA que una CPU porque:", options: ["Es más barata", "Permite cálculos matemáticos paralelos masivos", "Es más pequeña", "Usa menos luz"], a: 1 },
-            { q: "¿Qué pasa si entrenamos una IA con datos racistas?", options: ["Se rompe", "La IA será racista (hereda el sesgo)", "Los ignora", "Los borra"], a: 1 },
-            { q: "¿Quién propuso el argumento de la Habitación China?", options: ["Alan Turing", "John Searle", "Bill Gates", "Elon Musk"], a: 1 },
-            { q: "El modelo matemático de la máquina de Turing tiene:", options: ["5 elementos", "7 elementos (tupla)", "3 elementos", "10 elementos"], a: 1 },
-            { q: "En Turing, Σ (Sigma) representa:", options: ["El resultado", "La cinta", "Los inputs/entradas", "La memoria"], a: 2 },
-            { q: "El Perceptrón fue inventado por:", options: ["Turing", "Frank Rosenblatt", "McCarthy", "Hinton"], a: 1 },
-            { q: "El chatbot ELIZA fue desarrollado en:", options: ["Google", "Stanford", "MIT", "Harvard"], a: 2 },
-            { q: "AlexNet revolucionó el campo de la:", options: ["Visión Artificial", "Música generativa", "Robótica", "Traducción"], a: 0 },
-            { q: "La arquitectura que superó la lectura secuencial de texto es:", options: ["Perceptrón", "Transformer", "CNN", "RNN"], a: 1 },
-            { q: "El problema de la explicabilidad exige modelos que sean:", options: ["Más rápidos", "Auditables y transparentes", "Más baratos", "Coloridos"], a: 1 },
-            { q: "El concepto de AGI busca igualar:", options: ["A una calculadora", "La inteligencia general de un ser humano", "A un insecto", "A un auto"], a: 1 },
-            { q: "El juego de la imitación se jugaba con:", options: ["Un humano y una máquina", "Dos máquinas", "Tres humanos", "Solo humanos"], a: 0 },
-            { q: "¿Por qué el software clásico no es IA?", options: ["Porque usa reglas estrictas y no aprende de datos", "Porque es muy viejo", "Porque no usa internet", "Porque es gratis"], a: 0 }
+            { q: "¿Qué define a una IA General (AGI)?", options: ["Jugar ajedrez", "Capacidad cognitiva humana completa en cualquier tema", "Reconocer rostros en fotos", "Procesar videos 4K"], a: 1 },
+            { q: "¿Qué dispositivo liderado por Turing descifró códigos nazis?", options: ["El Perceptrón", "La máquina Bombe", "Deep Blue", "ENIAC"], a: 1 },
+            { q: "¿Qué propuso Turing sobre las máquinas antes de que existieran las PC?", options: ["Que tendrían sentimientos", "Que podían manipular símbolos matemáticos y procesar lógica", "Que usarían internet", "Que dominarían el mundo"], a: 1 },
+            { q: "La 'Cinta Infinita' de la Máquina de Turing equivale hoy a:", options: ["El disco duro", "La Memoria RAM", "La tarjeta de video", "El procesador"], a: 1 },
+            { q: "El 'Cabezal de Lectura/Escritura' de Turing equivale a:", options: ["La CPU (Procesador)", "El monitor", "El teclado", "El mouse"], a: 0 },
+            { q: "En la tupla de Turing, ¿qué representa δ (Delta)?", options: ["Los datos de entrada", "Los estados finales", "La función de transición (Las reglas IF/ELSE)", "El abecedario"], a: 2 },
+            { q: "¿Por qué Turing creó el 'Juego de la Imitación'?", options: ["Por diversión", "Para evadir la pregunta ambigua de si las máquinas 'piensan'", "Para ganar una apuesta", "Para probar teclados"], a: 1 },
+            { q: "¿Qué evalúa el juez humano en el Test de Turing?", options: ["Si la máquina calcula rápido", "Si no puede distinguir entre la máquina y un humano", "El código fuente de la IA", "La energía consumida"], a: 1 },
+            { q: "¿Cuál es la crítica principal de la 'Habitación China'?", options: ["El test es lento", "Simular respuestas perfectas (sintaxis) no significa comprender (semántica)", "El chino es difícil", "Turing se equivocó de idioma"], a: 1 },
+            { q: "¿Qué evento de 1956 bautizó oficialmente a la Inteligencia Artificial?", options: ["Lanzamiento de IBM", "La Conferencia de Dartmouth", "El fin de la guerra", "Lanzamiento de Apple"], a: 1 },
+            { q: "¿Qué era el 'Perceptrón' creado en 1958?", options: ["Un robot humanoide", "El primer algoritmo inspirado en neuronas biológicas", "Un antivirus", "Una supercomputadora"], a: 1 },
+            { q: "¿Cómo engañaba a la gente ELIZA, el primer chatbot?", options: ["Tenía conciencia", "Buscaba palabras clave y devolvía la misma frase como pregunta", "Estaba conectado a internet", "Usaba voz humana"], a: 1 },
+            { q: "¿Qué caracterizó a los 'Sistemas Expertos' de los años 80?", options: ["Redes neuronales profundas", "Miles de reglas lógicas fijas tipo SI-ENTONCES", "Aprendizaje por refuerzo", "Uso de GPUs"], a: 1 },
+            { q: "¿Por qué ocurrió el llamado 'Invierno de la IA'?", options: ["Los altos costos de mantenimiento y falta de potencia en las computadoras", "Un virus mundial", "Ley de prohibición de IA", "El código se perdió"], a: 0 },
+            { q: "¿Qué dos elementos causaron el boom del Deep Learning en 2010?", options: ["Mejores monitores", "El Big Data (Datos masivos) y la potencia paralela de las GPUs", "El Wifi 5G", "Sistemas operativos nuevos"], a: 1 },
+            { q: "¿Qué gran logro tuvo la red AlexNet en 2012?", options: ["Ganar al póker", "Reconocer imágenes con precisión récord mediante Redes Convolucionales", "Hablar 10 idiomas", "Manejar un dron"], a: 1 },
+            { q: "¿Cómo logró AlphaGo aprender a jugar el juego 'Go'?", options: ["Programaron cada jugada a mano", "Jugando millones de partidas contra sí mismo (Aprendizaje por Refuerzo)", "Viendo a humanos en Youtube", "Usando el Perceptrón"], a: 1 },
+            { q: "¿Qué arquitectura permite a modelos como Gemini o ChatGPT entender contexto largo?", options: ["Perceptrón Lineal", "La arquitectura Transformer", "Redes Neuronales Simples", "Sistemas Expertos"], a: 1 },
+            { q: "¿Cuál es el problema de la 'Caja Negra' en IA?", options: ["Es un fallo del disco", "El proceso de decisión de las redes profundas es incomprensible hasta para sus creadores", "Se bloquea la pantalla", "Robo de datos"], a: 1 },
+            { q: "Además de la eficiencia, ¿cuál es el gran desafío ético de la IA actual?", options: ["Que ocupe menos memoria", "Auditar sesgos, asegurar confiabilidad y respetar la privacidad de datos", "Que sea gratis", "Que tenga buena interfaz"], a: 1 },
+            { q: "¿En qué año falleció Alan Turing?", options: ["1980", "1954", "2000", "1945"], a: 1 },
+            { q: "¿A qué conflicto bélico ayudó a poner fin el equipo de Turing?", options: ["Primera Guerra Mundial", "Guerra de Vietnam", "Segunda Guerra Mundial", "Guerra Fría"], a: 2 },
+            { q: "El modelo teórico de la cinta de Turing se asume que es:", options: ["Limitada a 1GB", "Infinita", "Circular", "De lectura única"], a: 1 },
+            { q: "En la fórmula de la Máquina de Turing, 'Q' significa:", options: ["Quantums", "Queries", "Conjunto de Estados en memoria", "Quick memory"], a: 2 },
+            { q: "Originalmente, el Test de Turing se realizaba por medio de:", options: ["Video llamadas", "Mensajes de texto por terminal/teletipo", "Comandos de voz", "Presencialmente"], a: 1 },
+            { q: "La época de máximo optimismo y promesas en IA ocurrió en:", options: ["Los años 90s", "Los años 50s y 60s", "El 2020", "Los 30s"], a: 1 },
+            { q: "John McCarthy y Marvin Minsky son considerados pioneros que:", options: ["Fundaron Google", "Definieron el campo de la IA en Dartmouth", "Crearon la máquina Bombe", "Inventaron el internet"], a: 1 },
+            { q: "¿Cuál fue el principal límite matemático del Perceptrón de 1958?", options: ["No podía resolver problemas no lineales", "Se sobrecalentaba rápido", "No leía texto", "Solo funcionaba de día"], a: 0 },
+            { q: "El estancamiento en investigación por falta de fondos se conoció como:", options: ["El Crash del Software", "El Apagón Digital", "El Invierno de la IA", "La Caída del Silicio"], a: 2 },
+            { q: "¿En qué industrias brillaron los Sistemas Expertos antes de caer?", options: ["Videojuegos y películas", "Medicina y corporaciones (diagnóstico y reglas de negocio)", "Automotriz", "Redes Sociales"], a: 1 },
+            { q: "AlphaGo venció al campeón mundial Lee Sedol en el año:", options: ["1997", "2016", "2023", "2005"], a: 1 },
+            { q: "Las siglas LLM, base de la IA generativa actual, significan:", options: ["Large Language Model", "Low Logic Machine", "Linear Learning Method", "Local Language Memory"], a: 0 },
+            { q: "A diferencia de un Sistema Experto, el Deep Learning se basa en:", options: ["Árboles lógicos IF/THEN", "Capas ocultas de neuronas artificiales aprendiendo de datos", "Conexiones a Wikipedia", "Procesamiento secuencial"], a: 1 },
+            { q: "¿Por qué el Big Data fue crucial para revivir la IA?", options: ["Porque las redes neuronales necesitan ejemplos masivos para calibrar sus pesos probabilísticos", "Porque suena tecnológico", "Porque bajó los costos", "Porque es un antivirus"], a: 0 },
+            { q: "Las GPUs transformaron el campo de la IA porque:", options: ["Tienen luces RGB", "Manejan miles de operaciones matemáticas pequeñas en paralelo", "No usan disco duro", "Son muy silenciosas"], a: 1 },
+            { q: "Si se entrena un algoritmo con datos históricos con sesgo (racismo/machismo), la IA:", options: ["Lo borra mágicamente", "Aprende y replica el sesgo automatizando la discriminación", "Deja de funcionar", "Pide ayuda"], a: 1 },
+            { q: "El experimento mental de la Habitación China fue propuesto por el filósofo:", options: ["Alan Turing", "John Searle", "Karl Marx", "Immanuel Kant"], a: 1 },
+            { q: "Matemáticamente, la Máquina de Turing se define como una tupla de:", options: ["3 elementos", "7 elementos", "10 elementos", "5 elementos"], a: 1 },
+            { q: "En la definición de Turing, ¿qué es Σ (Sigma)?", options: ["El resultado de la suma", "El alfabeto de símbolos de entrada", "La cinta borrada", "La velocidad del cabezal"], a: 1 },
+            { q: "El creador del algoritmo Perceptrón fue:", options: ["Alan Turing", "Frank Rosenblatt", "Geoffrey Hinton", "Bill Gates"], a: 1 },
+            { q: "El bot ELIZA fue creado en el instituto:", options: ["MIT", "Stanford", "Harvard", "UPEC"], a: 0 },
+            { q: "Las Redes Neuronales Convolucionales (CNNs) destacan en tareas de:", options: ["Generar audio", "Visión Artificial y reconocimiento de imágenes", "Escribir código", "Traducción de idiomas"], a: 1 },
+            { q: "Antes de los Transformers, procesar texto era difícil porque:", options: ["Faltaban teclados", "Se procesaba palabra por palabra secuencialmente, perdiendo el contexto largo", "El internet era lento", "No había datos"], a: 1 },
+            { q: "El término 'Explicabilidad' (Explainable AI) se refiere a la necesidad de:", options: ["Que la IA hable claro", "Entender la lógica interna de cómo una red profunda toma sus decisiones", "Bajar el costo", "Que sea rápida"], a: 1 },
+            { q: "¿Cuál es el objetivo final (teórico) de los investigadores de AGI?", options: ["Igualar la versatilidad de la inteligencia humana en cualquier dominio", "Ganar todos los videojuegos", "Hacer calculadoras rápidas", "Crear baterías infinitas"], a: 0 },
+            { q: "El Juego de la Imitación de Turing involucraba a:", options: ["Dos máquinas", "Un juez humano, un humano oculto y una máquina oculta", "Tres computadoras", "Solo humanos simulando ser máquinas"], a: 1 },
+            { q: "¿Qué diferencia el software tradicional del Machine Learning?", options: ["El lenguaje de programación", "El software tradicional sigue reglas fijas dadas; el ML aprende reglas y patrones a partir de los datos", "El ML no usa código", "No hay diferencia"], a: 1 },
+            { q: "El trabajo de Turing en morfogénesis trataba sobre:", options: ["La creación de software", "Aplicar matemáticas para explicar patrones biológicos en la naturaleza", "Encriptación wifi", "Redes neuronales"], a: 1 }
         ];
 
-        let currentGameCode = ""; let currentPlayerName = ""; let currentPlayerAvatar = "fa-robot";
-        let gameQuestions = []; let currentQIndex = 0; let score = 0; let timerInterval; let timeLeft = 15;
-        let leaderboardData = [ { name: "Bot_Turing", avatar: "fa-user-astronaut", score: 850 } ];
+        let currentRoomCode = "";
+        let myPlayerId = "";
+        let isHost = false;
+        
+        let gameQuestions = [];
+        let currentQIndex = 0;
+        let score = 0;
+        let timerInterval;
+        let timeLeft = 15;
+        
+        let roomSubscription = null;
+        let playersSubscription = null;
 
-        function resetLobby() {
+        // Limpiar todas las variables y conexiones
+        window.limpiarTodo = async function() {
+            if(roomSubscription) supabase.removeChannel(roomSubscription);
+            if(playersSubscription) supabase.removeChannel(playersSubscription);
+            
+            if(isHost && currentRoomCode) {
+                await supabase.from('rooms').update({ state: 'finished' }).eq('code', currentRoomCode);
+            }
+            
+            currentRoomCode = ""; myPlayerId = ""; isHost = false;
+            clearInterval(timerInterval);
+            
             const hInit = document.getElementById('host-area-initial');
             const hAct = document.getElementById('host-area-active');
             const btnStart = document.getElementById('btn-start-game-host');
             const hList = document.getElementById('host-player-list');
             const pName = document.getElementById('player-name-input');
+            const pCode = document.getElementById('join-code-input');
             
             if(hInit) hInit.classList.remove('hidden');
             if(hAct) hAct.classList.add('hidden');
             if(btnStart) btnStart.disabled = true;
             if(hList) hList.innerHTML = '<li class="empty-list">Esperando conexiones...</li>';
             if(pName) pName.value = "";
-        }
+            if(pCode) pCode.value = "";
+        };
 
-        function resetGame() { 
-            clearInterval(timerInterval); 
-            currentQIndex = 0; 
-            score = 0; 
-        }
-
+        // --- LÓGICA DEL ANFITRIÓN (CREA SALA Y NO JUEGA) ---
         const btnCreateRoom = document.getElementById('btn-create-room');
         if(btnCreateRoom) {
-            btnCreateRoom.addEventListener('click', () => {
-                currentGameCode = Math.random().toString(36).substring(2, 6).toUpperCase();
-                document.getElementById('display-room-code').innerText = currentGameCode;
+            btnCreateRoom.addEventListener('click', async () => {
+                isHost = true;
+                currentRoomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+                
+                // Inserta la sala en Supabase
+                const { error } = await supabase.from('rooms').insert([{ code: currentRoomCode, state: 'lobby' }]);
+                if(error) { console.error(error); alert("Error de red creando la sala."); return; }
+
+                document.getElementById('display-room-code').innerText = currentRoomCode;
                 document.getElementById('host-area-initial').classList.add('hidden');
                 document.getElementById('host-area-active').classList.remove('hidden');
                 
-                setTimeout(() => {
-                    document.getElementById('host-player-list').innerHTML = `<li><i class="fa-solid fa-user-astronaut"></i> Estudiante_UPEC</li>`;
-                    document.getElementById('btn-start-game-host').disabled = false;
-                    document.getElementById('player-count').innerText = "1";
-                }, 2000);
+                // Anfitrión escucha inserciones en la tabla 'players' para esa sala
+                playersSubscription = supabase.channel('host_players')
+                    .on('postgres_changes', { event: '*', schema: 'public', table: 'players', filter: `room_code=eq.${currentRoomCode}` }, async () => {
+                        actualizarListaJugadoresParaHost();
+                    }).subscribe();
             });
         }
 
+        async function actualizarListaJugadoresParaHost() {
+            const { data, error } = await supabase.from('players').select('*').eq('room_code', currentRoomCode);
+            if(error) return;
+            
+            const list = document.getElementById('host-player-list');
+            const btnStart = document.getElementById('btn-start-game-host');
+            
+            if (data && data.length > 0) {
+                list.innerHTML = "";
+                data.forEach(p => {
+                    list.innerHTML += `<li><i class="fa-solid ${p.avatar}"></i> ${p.name}</li>`;
+                });
+                document.getElementById('player-count').innerText = data.length;
+                btnStart.disabled = false;
+            } else {
+                list.innerHTML = '<li class="empty-list">Esperando conexiones...</li>';
+                btnStart.disabled = true;
+            }
+
+            // Si ya estamos jugando, actualizamos la tabla del Host en vivo
+            const { data: roomData } = await supabase.from('rooms').select('state').eq('code', currentRoomCode).single();
+            if(roomData && (roomData.state === 'playing' || roomData.state === 'finished')) {
+                pintarTablaPosiciones(data);
+            }
+        }
+
+        // Host Empezar Partida
+        const btnStartHost = document.getElementById('btn-start-game-host');
+        if(btnStartHost) {
+            btnStartHost.addEventListener('click', async () => {
+                // Al ponerla en 'playing', a todos los jugadores suscritos se les abrirá el Test
+                await supabase.from('rooms').update({ state: 'playing' }).eq('code', currentRoomCode);
+                
+                // El Host no juega, va directo a ver los resultados en vivo
+                actualizarListaJugadoresParaHost(); 
+                window.mostrarPantallaJuego('leaderboard-screen');
+            });
+        }
+
+        // --- LÓGICA DEL JUGADOR (SE UNE, ESPERA Y JUEGA) ---
+        let currentPlayerAvatar = "fa-robot";
         const avatars = document.querySelectorAll('.avatar-option');
         avatars.forEach(opt => opt.addEventListener('click', () => {
             avatars.forEach(o => o.classList.remove('active')); 
@@ -249,36 +282,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const btnJoin = document.getElementById('btn-join-room');
         if(btnJoin) {
-            btnJoin.addEventListener('click', () => {
+            btnJoin.addEventListener('click', async () => {
                 const n = document.getElementById('player-name-input').value.trim();
                 const c = document.getElementById('join-code-input').value.trim().toUpperCase();
-                if(!n) { alert("¡Pon un nombre de usuario primero!"); return; }
                 
-                currentPlayerName = n; 
-                currentGameCode = c;
+                if(!n) { alert("¡Ingresa tu nombre primero!"); return; }
+                if(!c || c.length !== 4) { alert("Código de 4 letras inválido."); return; }
+
+                // Comprobar si sala existe en Supabase
+                const { data: room, error: roomErr } = await supabase.from('rooms').select('*').eq('code', c).single();
+                if(roomErr || !room) { alert("Esta sala no existe."); return; }
                 
-                document.getElementById('waiting-room-code').innerText = c || "UPEC";
+                currentRoomCode = c;
+
+                // Registrar jugador en Supabase
+                const { data: player, error: pErr } = await supabase.from('players').insert([{ room_code: c, name: n, avatar: currentPlayerAvatar }]).select().single();
+                if(pErr || !player) { alert("Error al entrar a la sala."); return; }
+                
+                myPlayerId = player.id; // Guarda el ID propio
+
+                document.getElementById('waiting-room-code').innerText = c;
                 document.getElementById('my-waiting-name').innerText = n;
                 document.getElementById('my-waiting-avatar').className = `fa-solid ${currentPlayerAvatar}`;
                 
-                showGameScreen('waiting-screen');
-                setTimeout(startGame, 3000); 
+                window.mostrarPantallaJuego('waiting-screen');
+
+                // Suscribirse a los cambios del Host en la tabla 'rooms'
+                roomSubscription = supabase.channel('player_room_listen')
+                    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `code=eq.${currentRoomCode}` }, payload => {
+                        if(payload.new.state === 'playing') {
+                            iniciarTestJugador(); // El Host le dio a Empezar
+                        } 
+                    }).subscribe();
+                    
+                // Por si se une tarde y ya empezaron
+                if(room.state === 'playing') iniciarTestJugador();
             });
         }
-        
-        const btnStartHost = document.getElementById('btn-start-game-host');
-        if(btnStartHost) btnStartHost.addEventListener('click', startGame);
 
-        function startGame() {
+        // --- FLUJO DE PREGUNTAS (Solo Jugador) ---
+        function iniciarTestJugador() {
             let shuffled = [...questionPool].sort(() => 0.5 - Math.random());
-            gameQuestions = shuffled.slice(0, 5);
-            currentQIndex = 0; 
-            score = 0;
-            showGameScreen('game-screen'); 
-            loadQuestion();
+            gameQuestions = shuffled.slice(0, 5); // Toma 5 aleatorias
+            currentQIndex = 0; score = 0;
+            window.mostrarPantallaJuego('game-screen'); 
+            cargarPregunta();
         }
 
-        function loadQuestion() {
+        function cargarPregunta() {
             clearInterval(timerInterval); timeLeft = 15; updateTimerUI();
             
             const qData = gameQuestions[currentQIndex];
@@ -292,13 +343,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 const btn = document.createElement('button'); 
                 btn.className = 'option-btn'; 
                 btn.innerText = optText;
-                btn.addEventListener('click', () => selectAnswer(i, btn)); 
+                btn.addEventListener('click', () => procesarRespuesta(i, btn)); 
                 container.appendChild(btn);
             });
             
             timerInterval = setInterval(() => {
                 timeLeft--; updateTimerUI();
-                if(timeLeft <= 0) { clearInterval(timerInterval); handleTimeOut(); }
+                if(timeLeft <= 0) { clearInterval(timerInterval); procesarRespuesta(-1, null); }
             }, 1000);
         }
 
@@ -307,66 +358,73 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('timer-bar-fill').style.width = `${(timeLeft / 15) * 100}%`;
         }
 
-        function selectAnswer(i, btn) {
+        async function procesarRespuesta(selectedIndex, btnElement) {
             clearInterval(timerInterval); 
-            const correct = gameQuestions[currentQIndex].a;
+            const correctIndex = gameQuestions[currentQIndex].a;
             const btns = document.querySelectorAll('.option-btn'); 
             btns.forEach(b => b.disabled = true);
             
-            if(i === correct) { 
-                btn.classList.add('correct'); 
-                score += 100 + (timeLeft * 10); 
+            if(selectedIndex === correctIndex) { 
+                if(btnElement) btnElement.classList.add('correct'); 
+                score += 100 + (timeLeft * 10); // Puntaje + Bono por rapidez
             } else { 
-                btn.classList.add('wrong'); 
-                btns[correct].classList.add('correct'); 
+                if(btnElement) btnElement.classList.add('wrong'); 
+                btns[correctIndex].classList.add('correct'); 
             }
-            setTimeout(nextQuestion, 2000);
+
+            // Sube el puntaje a Supabase para que el Host lo vea moverse en vivo
+            await supabase.from('players').update({ score: score }).eq('id', myPlayerId);
+
+            setTimeout(() => {
+                currentQIndex++;
+                if(currentQIndex < gameQuestions.length) cargarPregunta(); 
+                else terminarTestJugador();
+            }, 2000);
         }
 
-        function handleTimeOut() {
-            const btns = document.querySelectorAll('.option-btn'); 
-            btns.forEach(b => b.disabled = true);
-            btns[gameQuestions[currentQIndex].a].classList.add('correct'); 
-            setTimeout(nextQuestion, 2000);
+        async function terminarTestJugador() {
+            // Jugador terminó, va a Leaderboard a ver cómo van todos
+            const { data } = await supabase.from('players').select('*').eq('room_code', currentRoomCode);
+            pintarTablaPosiciones(data);
+            window.mostrarPantallaJuego('leaderboard-screen');
+            
+            // Suscribirse a cambios de otros jugadores para ver cómo acaba la tabla
+            if(!playersSubscription) {
+                 playersSubscription = supabase.channel('player_leaderboard')
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'players', filter: `room_code=eq.${currentRoomCode}` }, async () => {
+                    const { data: newData } = await supabase.from('players').select('*').eq('room_code', currentRoomCode);
+                    pintarTablaPosiciones(newData);
+                }).subscribe();
+            }
         }
 
-        function nextQuestion() {
-            currentQIndex++;
-            if(currentQIndex < gameQuestions.length) loadQuestion(); else endGame();
-        }
-
-        function endGame() {
-            leaderboardData.push({ name: currentPlayerName, avatar: currentPlayerAvatar, score: score });
-            leaderboardData.sort((a, b) => b.score - a.score);
+        function pintarTablaPosiciones(playersData) {
+            if(!playersData) return;
+            playersData.sort((a, b) => b.score - a.score); // Ordena de mayor a menor
             
             const tbody = document.getElementById('leaderboard-body'); 
+            if(!tbody) return;
             tbody.innerHTML = "";
             
-            leaderboardData.forEach((e, i) => {
+            playersData.forEach((e, i) => {
                 const tr = document.createElement('tr');
-                if(e.name === currentPlayerName && e.score === score) tr.style.background = "rgba(0, 229, 255, 0.1)";
+                if(e.id === myPlayerId) tr.style.background = "rgba(0, 229, 255, 0.2)"; // Resalta mi propio usuario
                 tr.innerHTML = `<td>${i + 1}</td><td><i class="fa-solid ${e.avatar}" style="color:var(--primary); font-size:1.5rem;"></i></td><td>${e.name}</td><td>${e.score} pts</td>`;
                 tbody.appendChild(tr);
             });
-            showGameScreen('leaderboard-screen');
         }
 
-        const btnRestart = document.getElementById('btn-restart-game');
-        if(btnRestart) btnRestart.addEventListener('click', startGame);
-        
+        // --- BOTONES FINALES ---
         const btnNewLobby = document.getElementById('btn-new-lobby');
-        if(btnNewLobby) btnNewLobby.addEventListener('click', () => { 
-            resetLobby(); 
-            showGameScreen('test-lobby-screen'); 
+        if(btnNewLobby) btnNewLobby.addEventListener('click', () => {
+            window.limpiarTodo();
+            window.mostrarPantallaJuego('test-lobby-screen');
         });
 
-        // ==========================================
-        // 5. FONDO CANVAS DE RED NEURONAL
-        // ==========================================
+        // --- D. FONDO CANVAS (Líneas Conectadas) ---
         const canvas = document.getElementById('network-canvas');
         if (canvas) {
-            const ctx = canvas.getContext('2d'); 
-            let w, h; let particles = [];
+            const ctx = canvas.getContext('2d'); let w, h; let particles = [];
             const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
             window.addEventListener('resize', resize); resize();
             
@@ -379,8 +437,7 @@ document.addEventListener('DOMContentLoaded', () => {
             for(let i=0;i<80;i++) particles.push(new P());
             
             function animate(){
-                ctx.clearRect(0,0,w,h); 
-                particles.forEach(p=>{p.update();p.draw()});
+                ctx.clearRect(0,0,w,h); particles.forEach(p=>{p.update();p.draw()});
                 for(let i=0;i<particles.length;i++){
                     for(let j=i+1;j<particles.length;j++){
                         const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y, d=Math.sqrt(dx*dx+dy*dy);
@@ -391,7 +448,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } 
             animate();
         }
-        
+
     } catch (error) {
         console.error("Error cargando la aplicación:", error);
     }

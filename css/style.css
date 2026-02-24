@@ -18,8 +18,11 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: var(--font-text); background-color: var(--bg-color); color: var(--text-main);
-    overflow: hidden; line-height: 1.6;
+    font-family: var(--font-text);
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    overflow: hidden; 
+    line-height: 1.6;
 }
 
 #network-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; opacity: 0.6; }
@@ -37,7 +40,8 @@ body {
 .slide.active { opacity: 1; visibility: visible; transform: scale(1) translateY(0); z-index: 10; }
 .content { margin: auto 0; width: 100%; max-width: 1400px; }
 
-.text-center { text-align: center; } .max-w { max-width: 900px; margin: 0 auto; }
+.text-center { text-align: center; }
+.max-w { max-width: 900px; margin: 0 auto; }
 .mt-2 { margin-top: 2rem; } .mt-3 { margin-top: 3rem; }
 
 h1 { font-size: 5rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1rem; letter-spacing: 2px; }
@@ -45,12 +49,12 @@ h2 { font-size: 3rem; color: var(--primary); margin-bottom: 1.5rem; text-shadow:
 h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #fff; }
 p { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 1.5rem; }
 
-/* Botones con z-index alto para asegurar el click */
+/* Botones */
 .btn-cyber {
     background: transparent; border: 2px solid var(--primary); color: var(--primary);
     padding: 12px 30px; font-family: var(--font-code); font-weight: bold; cursor: pointer;
     transition: all 0.3s; text-transform: uppercase; display: inline-flex; align-items: center; gap: 10px;
-    border-radius: 4px; position: relative; z-index: 100; pointer-events: auto !important;
+    border-radius: 4px; position: relative; overflow: hidden; pointer-events: auto !important; z-index: 1000;
 }
 .btn-cyber:hover { background: var(--primary-glow); color: #fff; box-shadow: 0 0 20px var(--primary-glow); transform: translateY(-3px); }
 .btn-cyber:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(1); transform: none; box-shadow: none; }
@@ -76,13 +80,14 @@ p { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 1.5rem; }
 .danger-box { background: rgba(255, 50, 50, 0.1); border-left: 4px solid var(--danger); padding: 2rem; }
 .success-box { background: rgba(50, 255, 100, 0.1); border-left: 4px solid var(--success); padding: 2rem; }
 
-/* Simuladores y Chat */
+/* Simuladores */
 .tape-ui { display: flex; flex-direction: column; align-items: center; margin: 2rem 0; }
 .tape-track { display: flex; gap: 5px; border-top: 2px solid var(--primary); border-bottom: 2px solid var(--primary); padding: 10px 0; }
 .tape-track span { width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-family: var(--font-code); font-size: 1.5rem; background: #111; border: 1px solid #333; }
 .highlight-cell { background: rgba(0, 229, 255, 0.2) !important; border-color: var(--primary) !important; color: var(--primary); }
 .math-container { background: #0a0a0f; border: 1px solid var(--border-color); padding: 2rem; border-radius: 12px; display: inline-block; margin-top: 2rem; }
 .formula-box { font-size: 2rem; color: #fff; margin: 1.5rem 0; }
+
 .chat-interface { background: #0a0a0f; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; height: 400px; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.8); }
 .chat-header { background: #111; padding: 15px; text-align: center; color: var(--success); }
 .chat-history { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
@@ -92,32 +97,39 @@ p { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 1.5rem; }
 .chat-controls { padding: 15px; display: flex; justify-content: center; background: #05050a; }
 
 /* =========================================================
-   CONTROLES INFERIORES: AQUÍ ESTÁ EL ARREGLO FINAL DEL 1/10
+   CONTROLES (FLECHAS Y 1/10 CORREGIDO)
    ========================================================= */
 .presentation-controls { 
     position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); 
-    display: flex; align-items: center; gap: 2rem; flex-wrap: nowrap !important; 
-    background: rgba(10, 10, 15, 0.8); backdrop-filter: blur(10px); 
-    padding: 10px 30px; border-radius: 50px; border: 1px solid var(--border-color); z-index: 100; 
+    display: flex; align-items: center; justify-content: center; gap: 20px;
+    background: rgba(10, 10, 15, 0.9); backdrop-filter: blur(10px); 
+    padding: 10px 25px; border-radius: 50px; border: 1px solid var(--border-color); 
+    z-index: 9999; /* Super alto para que nada bloquee el clic */
 }
-.control-btn { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; transition: color 0.3s; padding: 0 10px;}
+
+.control-btn { 
+    background: none; border: none; color: #fff; font-size: 1.5rem; 
+    cursor: pointer; transition: color 0.3s; padding: 0 10px;
+    pointer-events: auto !important; /* Fuerza clic */
+}
 .control-btn:hover { color: var(--primary); }
 
 .slide-counter { 
     font-family: var(--font-code); 
     font-size: 1.2rem; 
     font-weight: bold; 
-    min-width: 80px; 
-    white-space: nowrap !important; /* BLOQUEA SALTO DE LÍNEA */
-    display: inline-block; 
+    min-width: 90px; 
     text-align: center; 
+    /* ESTAS TRES LÍNEAS EVITAN QUE SE PARTA EL TEXTO */
+    white-space: nowrap !important; 
+    word-break: keep-all !important;
+    display: inline-block;
 }
-
 
 /* --- OVERLAY DEL TEST --- */
 .hidden { display: none !important; }
-#game-overlay-wrapper { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-color); z-index: 9999; overflow-y: auto; }
-.btn-top-left { position: absolute; top: 20px; left: 20px; background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 15px; font-family: var(--font-code); font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s; z-index: 10000;}
+#game-overlay-wrapper { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-color); z-index: 99999; overflow-y: auto; }
+.btn-top-left { position: absolute; top: 20px; left: 20px; background: transparent; border: 1px solid var(--primary); color: var(--primary); padding: 8px 15px; font-family: var(--font-code); font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s; z-index: 100000;}
 .btn-top-left:hover { background: var(--primary); color: #000; }
 
 .game-screen { position: absolute; top: 0; left: 0; width: 100%; min-height: 100%; opacity: 0; visibility: hidden; transition: 0.5s; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 3rem 10%; }
@@ -170,7 +182,7 @@ p { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 1.5rem; }
 .leaderboard-table td { padding: 1.2rem 1.5rem; border-bottom: 1px solid var(--border-color); }
 .leaderboard-table tr:first-child td { background: rgba(255,215,0,0.1); font-weight: bold; font-size: 1.2rem; }
 
-/* Animaciones Grales */
+/* Animaciones */
 .glitch-text { position: relative; color: white; display: inline-block; }
 .glitch-text::before, .glitch-text::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8; }
 .glitch-text::before { left: 2px; text-shadow: -2px 0 red; clip: rect(24px, 550px, 90px, 0); animation: glitch-anim 3s infinite linear alternate-reverse; }

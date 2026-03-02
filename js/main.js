@@ -1,10 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    console.log("Sistema Base Iniciado correctamente.");
+
     // =========================================================================
-    // PARTE 1: LÓGICA DE LA PRESENTACIÓN (100% SEGURA E INDEPENDIENTE)
+    // BLOQUE 1: LA PRESENTACIÓN (NO DEPENDE DE NADA MÁS, NO PUEDE FALLAR)
     // =========================================================================
     
-    // --- NAVEGACIÓN DIAPOSITIVAS ---
+    // NAVEGACIÓN
     const slides = document.querySelectorAll('.slide');
     const btnNext = document.getElementById('next-btn');
     const btnPrev = document.getElementById('prev-btn');
@@ -17,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
             slide.classList.remove('active');
             if (index === currentSlide) slide.classList.add('active');
         });
+        
         if (counter) counter.innerText = (currentSlide + 1) + " / " + slides.length;
         if (btnPrev) btnPrev.style.opacity = currentSlide === 0 ? "0.3" : "1";
         if (btnNext) btnNext.style.opacity = currentSlide === slides.length - 1 ? "0.3" : "1";
@@ -27,33 +30,20 @@ document.addEventListener('DOMContentLoaded', () => {
     
     document.addEventListener('keydown', (e) => {
         const overlay = document.getElementById('game-overlay-wrapper');
-        // Solo navega si el juego está cerrado
         if (!overlay || overlay.classList.contains('hidden')) {
             if (e.key === 'ArrowRight' || e.key === 'Space') { if (currentSlide < slides.length - 1) { currentSlide++; updateSlides(); } }
             if (e.key === 'ArrowLeft') { if (currentSlide > 0) { currentSlide--; updateSlides(); } }
         }
     });
-    updateSlides();
+    updateSlides(); // Forzar dibujo inicial
 
-    // --- EFECTO 3D EN TARJETAS ---
-    const cards3D = document.querySelectorAll('.3d-card');
-    cards3D.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
-            card.style.transform = `perspective(1000px) rotateX(${((y - rect.height/2) / (rect.height/2)) * -10}deg) rotateY(${((x - rect.width/2) / (rect.width/2)) * 10}deg) scale3d(1.05, 1.05, 1.05)`;
-        });
-        card.addEventListener('mouseleave', () => { card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`; });
-    });
-
-    // --- SIMULADOR DE CHAT (SLIDE 6) ---
+    // SIMULADOR CHAT (SLIDE 6)
     const btnRunSim = document.getElementById('btn-run-sim');
     let simRunning = false;
-    
     if (btnRunSim) {
         btnRunSim.addEventListener('click', async () => {
             if (simRunning) return; 
             simRunning = true;
-            
             const chatHistory = document.getElementById('chat-history');
             if (!chatHistory) return;
 
@@ -72,60 +62,69 @@ document.addEventListener('DOMContentLoaded', () => {
                 const typing = document.createElement('div'); 
                 typing.className = `msg-bubble ${msgs[i].r}`; 
                 typing.innerHTML = '<i class="fa-solid fa-ellipsis fa-fade"></i>'; 
-                chatHistory.appendChild(typing); 
-                chatHistory.scrollTop = chatHistory.scrollHeight;
-                
+                chatHistory.appendChild(typing); chatHistory.scrollTop = chatHistory.scrollHeight;
                 await new Promise(r => setTimeout(r, msgs[i].d));
-                
                 chatHistory.removeChild(typing); 
-                const real = document.createElement('div'); 
-                real.className = `msg-bubble ${msgs[i].r}`; 
-                real.textContent = msgs[i].t; 
-                chatHistory.appendChild(real); 
-                chatHistory.scrollTop = chatHistory.scrollHeight;
+                const real = document.createElement('div'); real.className = `msg-bubble ${msgs[i].r}`; real.textContent = msgs[i].t; 
+                chatHistory.appendChild(real); chatHistory.scrollTop = chatHistory.scrollHeight;
             }
             btnRunSim.innerHTML = '<i class="fa-solid fa-play"></i> EJECUTAR SIMULACIÓN'; 
             simRunning = false;
         });
     }
 
-    // --- ABRIR Y CERRAR EL JUEGO DESDE LA PORTADA ---
+    // BOTONES ABRIR/CERRAR TEST
     const btnOpenTest = document.getElementById('btn-open-test');
     const btnCloseTest = document.getElementById('btn-close-test');
     const gameOverlay = document.getElementById('game-overlay-wrapper');
 
     function showGameScreen(screenId) {
-        const gameScreens = document.querySelectorAll('.game-screen');
-        gameScreens.forEach(s => s.classList.remove('active-game-screen'));
-        setTimeout(() => { 
-            const target = document.getElementById(screenId);
-            if(target) target.classList.add('active-game-screen'); 
-        }, 50);
+        document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active-game-screen'));
+        setTimeout(() => { const t = document.getElementById(screenId); if(t) t.classList.add('active-game-screen'); }, 50);
     }
 
     if (btnOpenTest) {
         btnOpenTest.addEventListener('click', () => {
-            if(gameOverlay) {
-                gameOverlay.classList.remove('hidden');
-                showGameScreen('test-lobby-screen');
-            }
+            if(gameOverlay) { gameOverlay.classList.remove('hidden'); showGameScreen('test-lobby-screen'); }
         });
     }
 
     if (btnCloseTest) {
         btnCloseTest.addEventListener('click', () => {
-            if(gameOverlay) gameOverlay.classList.add('hidden');
-            // Si el juego estaba corriendo, limpiar variables
-            if(typeof limpiarJuegoCompleto === 'function') limpiarJuegoCompleto();
+            if(gameOverlay) { gameOverlay.classList.add('hidden'); }
+            // Forzar limpieza si existe
+            if(window.limpiarSesionSupabase) window.limpiarSesionSupabase();
         });
+    }
+
+    // FONDO CANVAS ANIMADO
+    const canvas = document.getElementById('network-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d'); let w, h; let particles = [];
+        const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+        window.addEventListener('resize', resize); resize();
+        class P { 
+            constructor(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-.5)*.5;this.vy=(Math.random()-.5)*.5;this.r=Math.random()*2} 
+            update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>w)this.vx*=-1;if(this.y<0||this.y>h)this.vy*=-1} 
+            draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle='rgba(0,229,255,0.5)';ctx.fill()} 
+        }
+        for(let i=0;i<80;i++) particles.push(new P());
+        function animate(){
+            ctx.clearRect(0,0,w,h); particles.forEach(p=>{p.update();p.draw()});
+            for(let i=0;i<particles.length;i++){
+                for(let j=i+1;j<particles.length;j++){
+                    const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y, d=Math.sqrt(dx*dx+dy*dy);
+                    if(d<120){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(0,229,255,${.2-d/600})`;ctx.stroke()}
+                }
+            } requestAnimationFrame(animate);
+        } animate();
     }
 
 
     // =========================================================================
-    // PARTE 2: LÓGICA DEL JUEGO CON SUPABASE (Con Try/Catch por seguridad)
+    // BLOQUE 2: SISTEMA MULTIJUGADOR SUPABASE (Protegido por Try/Catch Fuerte)
     // =========================================================================
     
-    // Banco de 50 preguntas exactas de la exposición
     const questionPool = [
         { q: "A nivel de software, ¿qué es la IA moderna?", options: ["Una mente consciente artificial", "Modelos probabilísticos que aprenden de datos", "Instrucciones rígidas paso a paso", "Un cerebro biológico simulado"], a: 1 },
         { q: "¿Qué tipo de IA es la única que existe realmente hoy en día?", options: ["IA General (AGI)", "Superinteligencia", "IA Estrecha (ANI)", "IA Consciente"], a: 2 },
@@ -181,16 +180,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentRoomCode = ""; let myPlayerId = ""; let isHost = false;
     let gameQuestions = []; let currentQIndex = 0; let score = 0; let timerInterval; let timeLeft = 15;
-    let roomSubscription = null; let playersSubscription = null;
+    let roomSubscription = null; let playersSubscription = null; let miSupabase = null;
 
-    window.limpiarJuegoCompleto = async function() {
+    // Conectamos a Supabase SÓLO si la librería cargó bien
+    try {
+        if (typeof window.supabase !== 'undefined') {
+            miSupabase = window.supabase.createClient('https://osriruqcnxshmkvdhijw.supabase.co', 'sb_publishable_9-dt8ZHtX3uAQtb4vMPKGQ__34i08qS');
+            console.log("Supabase Conectado.");
+        } else {
+            console.warn("ADVERTENCIA: Librería Supabase bloqueada por la red. El Test Online no funcionará, pero la presentación sí.");
+        }
+    } catch(err) {
+        console.error("Error crítico cargando Supabase:", err);
+    }
+
+    // Funciones de Limpieza
+    window.limpiarSesionSupabase = async function() {
+        if(!miSupabase) return;
         try {
-            if(window.supabase) {
-                if(roomSubscription) window.supabase.removeChannel(roomSubscription);
-                if(playersSubscription) window.supabase.removeChannel(playersSubscription);
-                if(isHost && currentRoomCode) await window.supabase.from('rooms').update({ state: 'finished' }).eq('code', currentRoomCode);
-            }
+            if(roomSubscription) miSupabase.removeChannel(roomSubscription);
+            if(playersSubscription) miSupabase.removeChannel(playersSubscription);
+            if(isHost && currentRoomCode) await miSupabase.from('rooms').update({ state: 'finished' }).eq('code', currentRoomCode);
         } catch(e) {}
+        
         currentRoomCode = ""; myPlayerId = ""; isHost = false; clearInterval(timerInterval);
         const hInit = document.getElementById('host-area-initial'); const hAct = document.getElementById('host-area-active');
         const btnStart = document.getElementById('btn-start-game-host'); const hList = document.getElementById('host-player-list');
@@ -198,206 +210,168 @@ document.addEventListener('DOMContentLoaded', () => {
         if(btnStart) btnStart.disabled = true; if(hList) hList.innerHTML = '<li class="empty-list">Esperando conexiones...</li>';
     };
 
-    // INTENTAMOS INICIAR SUPABASE
-    try {
-        if (typeof window.supabase !== 'undefined') {
-            const supabaseUrl = 'https://osriruqcnxshmkvdhijw.supabase.co';
-            const supabaseKey = 'sb_publishable_9-dt8ZHtX3uAQtb4vMPKGQ__34i08qS';
-            const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+    // HOST: CREAR SALA
+    const btnCreateRoom = document.getElementById('btn-create-room');
+    if(btnCreateRoom) {
+        btnCreateRoom.addEventListener('click', async () => {
+            if(!miSupabase) { alert("Sin conexión a la base de datos."); return; }
+            isHost = true;
+            currentRoomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const { error } = await miSupabase.from('rooms').insert([{ code: currentRoomCode, state: 'lobby' }]);
+            if(error) { alert("Error creando la sala en internet."); return; }
 
-            // HOST: CREAR SALA
-            const btnCreateRoom = document.getElementById('btn-create-room');
-            if(btnCreateRoom) {
-                btnCreateRoom.addEventListener('click', async () => {
-                    isHost = true;
-                    currentRoomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
-                    const { error } = await supabase.from('rooms').insert([{ code: currentRoomCode, state: 'lobby' }]);
-                    if(error) { alert("Error de red creando la sala."); return; }
-
-                    document.getElementById('display-room-code').innerText = currentRoomCode;
-                    document.getElementById('host-area-initial').classList.add('hidden');
-                    document.getElementById('host-area-active').classList.remove('hidden');
-                    
-                    playersSubscription = supabase.channel('host_players')
-                        .on('postgres_changes', { event: '*', schema: 'public', table: 'players', filter: `room_code=eq.${currentRoomCode}` }, async () => {
-                            const { data, error } = await supabase.from('players').select('*').eq('room_code', currentRoomCode);
-                            if(error) return;
-                            const list = document.getElementById('host-player-list');
-                            const btnStart = document.getElementById('btn-start-game-host');
-                            if (data && data.length > 0) {
-                                list.innerHTML = ""; data.forEach(p => { list.innerHTML += `<li><i class="fa-solid ${p.avatar}"></i> ${p.name}</li>`; });
-                                document.getElementById('player-count').innerText = data.length; btnStart.disabled = false;
-                            } else {
-                                list.innerHTML = '<li class="empty-list">Esperando conexiones...</li>'; btnStart.disabled = true;
-                            }
-                            const { data: roomData } = await supabase.from('rooms').select('state').eq('code', currentRoomCode).single();
-                            if(roomData && (roomData.state === 'playing' || roomData.state === 'finished')) pintarTablaPosiciones(data);
-                        }).subscribe();
-                });
-            }
-
-            // HOST: INICIAR PARTIDA
-            const btnStartHost = document.getElementById('btn-start-game-host');
-            if(btnStartHost) {
-                btnStartHost.addEventListener('click', async () => {
-                    await supabase.from('rooms').update({ state: 'playing' }).eq('code', currentRoomCode);
-                    const { data } = await supabase.from('players').select('*').eq('room_code', currentRoomCode);
-                    pintarTablaPosiciones(data);
-                    showGameScreen('leaderboard-screen');
-                });
-            }
-
-            // JUGADOR: SELECCIÓN AVATAR Y UNIRSE
-            let currentPlayerAvatar = "fa-robot";
-            const avatars = document.querySelectorAll('.avatar-option');
-            avatars.forEach(opt => opt.addEventListener('click', () => {
-                avatars.forEach(o => o.classList.remove('active')); opt.classList.add('active');
-                currentPlayerAvatar = opt.getAttribute('data-avatar');
-            }));
-
-            const btnJoin = document.getElementById('btn-join-room');
-            if(btnJoin) {
-                btnJoin.addEventListener('click', async () => {
-                    const n = document.getElementById('player-name-input').value.trim();
-                    const c = document.getElementById('join-code-input').value.trim().toUpperCase();
-                    if(!n) { alert("¡Ingresa tu nombre!"); return; }
-                    if(!c || c.length !== 4) { alert("Código inválido."); return; }
-
-                    const { data: room, error: roomErr } = await supabase.from('rooms').select('*').eq('code', c).single();
-                    if(roomErr || !room) { alert("La sala no existe."); return; }
-                    
-                    currentRoomCode = c;
-                    const { data: player, error: pErr } = await supabase.from('players').insert([{ room_code: c, name: n, avatar: currentPlayerAvatar }]).select().single();
-                    if(pErr || !player) { alert("Error al entrar."); return; }
-                    
-                    myPlayerId = player.id;
-                    document.getElementById('waiting-room-code').innerText = c;
-                    document.getElementById('my-waiting-name').innerText = n;
-                    document.getElementById('my-waiting-avatar').className = `fa-solid ${currentPlayerAvatar}`;
-                    showGameScreen('waiting-screen');
-
-                    roomSubscription = supabase.channel('player_room_listen')
-                        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `code=eq.${currentRoomCode}` }, payload => {
-                            if(payload.new.state === 'playing') iniciarTestJugador(); 
-                        }).subscribe();
-                        
-                    if(room.state === 'playing') iniciarTestJugador();
-                });
-            }
-
-            // FLUJO DEL TEST PARA EL JUGADOR
-            function iniciarTestJugador() {
-                let shuffled = [...questionPool].sort(() => 0.5 - Math.random());
-                gameQuestions = shuffled.slice(0, 5); currentQIndex = 0; score = 0;
-                showGameScreen('game-screen'); cargarPregunta();
-            }
-
-            function cargarPregunta() {
-                clearInterval(timerInterval); timeLeft = 15; updateTimerUI();
-                const qData = gameQuestions[currentQIndex];
-                document.getElementById('current-q-num').innerText = currentQIndex + 1;
-                document.getElementById('question-text').innerText = qData.q;
-                
-                const container = document.getElementById('options-container'); container.innerHTML = "";
-                qData.options.forEach((optText, i) => {
-                    const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerText = optText;
-                    btn.addEventListener('click', () => procesarRespuesta(i, btn)); container.appendChild(btn);
-                });
-                
-                timerInterval = setInterval(() => {
-                    timeLeft--; updateTimerUI();
-                    if(timeLeft <= 0) { clearInterval(timerInterval); procesarRespuesta(-1, null); }
-                }, 1000);
-            }
-
-            function updateTimerUI() {
-                document.getElementById('timer-count').innerText = timeLeft;
-                document.getElementById('timer-bar-fill').style.width = `${(timeLeft / 15) * 100}%`;
-            }
-
-            async function procesarRespuesta(selectedIndex, btnElement) {
-                clearInterval(timerInterval); 
-                const correctIndex = gameQuestions[currentQIndex].a;
-                const btns = document.querySelectorAll('.option-btn'); btns.forEach(b => b.disabled = true);
-                
-                if(selectedIndex === correctIndex) { 
-                    if(btnElement) btnElement.classList.add('correct'); score += 100 + (timeLeft * 10); 
-                } else { 
-                    if(btnElement) btnElement.classList.add('wrong'); btns[correctIndex].classList.add('correct'); 
-                }
-
-                await supabase.from('players').update({ score: score }).eq('id', myPlayerId);
-
-                setTimeout(() => {
-                    currentQIndex++;
-                    if(currentQIndex < gameQuestions.length) cargarPregunta(); else terminarTestJugador();
-                }, 2000);
-            }
-
-            async function terminarTestJugador() {
-                const { data } = await supabase.from('players').select('*').eq('room_code', currentRoomCode);
-                pintarTablaPosiciones(data);
-                showGameScreen('leaderboard-screen');
-                
-                if(!playersSubscription) {
-                     playersSubscription = supabase.channel('player_leaderboard')
-                    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'players', filter: `room_code=eq.${currentRoomCode}` }, async () => {
-                        const { data: newData } = await supabase.from('players').select('*').eq('room_code', currentRoomCode);
-                        pintarTablaPosiciones(newData);
-                    }).subscribe();
-                }
-            }
-
-            function pintarTablaPosiciones(playersData) {
-                if(!playersData) return;
-                playersData.sort((a, b) => b.score - a.score);
-                const tbody = document.getElementById('leaderboard-body'); if(!tbody) return;
-                tbody.innerHTML = "";
-                playersData.forEach((e, i) => {
-                    const tr = document.createElement('tr');
-                    if(e.id === myPlayerId) tr.style.background = "rgba(0, 229, 255, 0.2)";
-                    tr.innerHTML = `<td>${i + 1}</td><td><i class="fa-solid ${e.avatar}" style="color:var(--primary); font-size:1.5rem;"></i></td><td>${e.name}</td><td>${e.score} pts</td>`;
-                    tbody.appendChild(tr);
-                });
-            }
-
-            const btnNewLobby = document.getElementById('btn-new-lobby');
-            if(btnNewLobby) btnNewLobby.addEventListener('click', () => { window.limpiarJuegoCompleto(); showGameScreen('test-lobby-screen'); });
-
-        } else {
-            console.error("No se pudo cargar Supabase. La presentación funcionará sin el test en red.");
-        }
-    } catch(err) {
-        console.error("Error en módulo de Supabase:", err);
+            document.getElementById('display-room-code').innerText = currentRoomCode;
+            document.getElementById('host-area-initial').classList.add('hidden');
+            document.getElementById('host-area-active').classList.remove('hidden');
+            
+            playersSubscription = miSupabase.channel('host_players')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'players', filter: `room_code=eq.${currentRoomCode}` }, async () => {
+                    const { data, error } = await miSupabase.from('players').select('*').eq('room_code', currentRoomCode);
+                    if(error) return;
+                    const list = document.getElementById('host-player-list');
+                    const btnStart = document.getElementById('btn-start-game-host');
+                    if (data && data.length > 0) {
+                        list.innerHTML = ""; data.forEach(p => { list.innerHTML += `<li><i class="fa-solid ${p.avatar}"></i> ${p.name}</li>`; });
+                        document.getElementById('player-count').innerText = data.length; btnStart.disabled = false;
+                    } else {
+                        list.innerHTML = '<li class="empty-list">Esperando conexiones...</li>'; btnStart.disabled = true;
+                    }
+                    const { data: roomData } = await miSupabase.from('rooms').select('state').eq('code', currentRoomCode).single();
+                    if(roomData && (roomData.state === 'playing' || roomData.state === 'finished')) pintarTablaPosiciones(data);
+                }).subscribe();
+        });
     }
 
-    // =========================================================================
-    // PARTE 3: CANVAS DE RED NEURONAL DE FONDO
-    // =========================================================================
-    const canvas = document.getElementById('network-canvas');
-    if (canvas) {
-        const ctx = canvas.getContext('2d'); let w, h; let particles = [];
-        const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
-        window.addEventListener('resize', resize); resize();
-        
-        class P { 
-            constructor(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-.5)*.5;this.vy=(Math.random()-.5)*.5;this.r=Math.random()*2} 
-            update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>w)this.vx*=-1;if(this.y<0||this.y>h)this.vy*=-1} 
-            draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle='rgba(0,229,255,0.5)';ctx.fill()} 
-        }
-        
-        for(let i=0;i<80;i++) particles.push(new P());
-        
-        function animate(){
-            ctx.clearRect(0,0,w,h); particles.forEach(p=>{p.update();p.draw()});
-            for(let i=0;i<particles.length;i++){
-                for(let j=i+1;j<particles.length;j++){
-                    const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y, d=Math.sqrt(dx*dx+dy*dy);
-                    if(d<120){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(0,229,255,${.2-d/600})`;ctx.stroke()}
-                }
-            }
-            requestAnimationFrame(animate);
-        } 
-        animate();
+    // HOST: INICIAR PARTIDA
+    const btnStartHost = document.getElementById('btn-start-game-host');
+    if(btnStartHost) {
+        btnStartHost.addEventListener('click', async () => {
+            if(!miSupabase) return;
+            await miSupabase.from('rooms').update({ state: 'playing' }).eq('code', currentRoomCode);
+            const { data } = await miSupabase.from('players').select('*').eq('room_code', currentRoomCode);
+            pintarTablaPosiciones(data);
+            showGameScreen('leaderboard-screen');
+        });
     }
+
+    // JUGADOR: SELECCIÓN AVATAR
+    let currentPlayerAvatar = "fa-robot";
+    const avatars = document.querySelectorAll('.avatar-option');
+    avatars.forEach(opt => opt.addEventListener('click', () => {
+        avatars.forEach(o => o.classList.remove('active')); opt.classList.add('active');
+        currentPlayerAvatar = opt.getAttribute('data-avatar');
+    }));
+
+    // JUGADOR: UNIRSE
+    const btnJoin = document.getElementById('btn-join-room');
+    if(btnJoin) {
+        btnJoin.addEventListener('click', async () => {
+            if(!miSupabase) { alert("Sin conexión a la base de datos."); return; }
+            const n = document.getElementById('player-name-input').value.trim();
+            const c = document.getElementById('join-code-input').value.trim().toUpperCase();
+            if(!n) { alert("¡Ingresa tu nombre!"); return; }
+            if(!c || c.length !== 4) { alert("Código inválido."); return; }
+
+            const { data: room, error: roomErr } = await miSupabase.from('rooms').select('*').eq('code', c).single();
+            if(roomErr || !room) { alert("La sala no existe."); return; }
+            
+            currentRoomCode = c;
+            const { data: player, error: pErr } = await miSupabase.from('players').insert([{ room_code: c, name: n, avatar: currentPlayerAvatar }]).select().single();
+            if(pErr || !player) { alert("Error al entrar."); return; }
+            
+            myPlayerId = player.id;
+            document.getElementById('waiting-room-code').innerText = c;
+            document.getElementById('my-waiting-name').innerText = n;
+            document.getElementById('my-waiting-avatar').className = `fa-solid ${currentPlayerAvatar}`;
+            showGameScreen('waiting-screen');
+
+            roomSubscription = miSupabase.channel('player_room_listen')
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `code=eq.${currentRoomCode}` }, payload => {
+                    if(payload.new.state === 'playing') iniciarTestJugador(); 
+                }).subscribe();
+                
+            if(room.state === 'playing') iniciarTestJugador();
+        });
+    }
+
+    // FLUJO DE PREGUNTAS (JUGADOR)
+    function iniciarTestJugador() {
+        let shuffled = [...questionPool].sort(() => 0.5 - Math.random());
+        gameQuestions = shuffled.slice(0, 5); currentQIndex = 0; score = 0;
+        showGameScreen('game-screen'); cargarPregunta();
+    }
+
+    function cargarPregunta() {
+        clearInterval(timerInterval); timeLeft = 15; updateTimerUI();
+        const qData = gameQuestions[currentQIndex];
+        document.getElementById('current-q-num').innerText = currentQIndex + 1;
+        document.getElementById('question-text').innerText = qData.q;
+        
+        const container = document.getElementById('options-container'); container.innerHTML = "";
+        qData.options.forEach((optText, i) => {
+            const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerText = optText;
+            btn.addEventListener('click', () => procesarRespuesta(i, btn)); container.appendChild(btn);
+        });
+        
+        timerInterval = setInterval(() => {
+            timeLeft--; updateTimerUI();
+            if(timeLeft <= 0) { clearInterval(timerInterval); procesarRespuesta(-1, null); }
+        }, 1000);
+    }
+
+    function updateTimerUI() {
+        document.getElementById('timer-count').innerText = timeLeft;
+        document.getElementById('timer-bar-fill').style.width = `${(timeLeft / 15) * 100}%`;
+    }
+
+    async function procesarRespuesta(selectedIndex, btnElement) {
+        clearInterval(timerInterval); 
+        const correctIndex = gameQuestions[currentQIndex].a;
+        const btns = document.querySelectorAll('.option-btn'); btns.forEach(b => b.disabled = true);
+        
+        if(selectedIndex === correctIndex) { 
+            if(btnElement) btnElement.classList.add('correct'); score += 100 + (timeLeft * 10); 
+        } else { 
+            if(btnElement) btnElement.classList.add('wrong'); btns[correctIndex].classList.add('correct'); 
+        }
+
+        if(miSupabase) await miSupabase.from('players').update({ score: score }).eq('id', myPlayerId);
+
+        setTimeout(() => {
+            currentQIndex++;
+            if(currentQIndex < gameQuestions.length) cargarPregunta(); else terminarTestJugador();
+        }, 2000);
+    }
+
+    async function terminarTestJugador() {
+        if(!miSupabase) return;
+        const { data } = await miSupabase.from('players').select('*').eq('room_code', currentRoomCode);
+        pintarTablaPosiciones(data);
+        showGameScreen('leaderboard-screen');
+        
+        if(!playersSubscription) {
+             playersSubscription = miSupabase.channel('player_leaderboard')
+            .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'players', filter: `room_code=eq.${currentRoomCode}` }, async () => {
+                const { data: newData } = await miSupabase.from('players').select('*').eq('room_code', currentRoomCode);
+                pintarTablaPosiciones(newData);
+            }).subscribe();
+        }
+    }
+
+    function pintarTablaPosiciones(playersData) {
+        if(!playersData) return;
+        playersData.sort((a, b) => b.score - a.score);
+        const tbody = document.getElementById('leaderboard-body'); if(!tbody) return;
+        tbody.innerHTML = "";
+        playersData.forEach((e, i) => {
+            const tr = document.createElement('tr');
+            if(e.id === myPlayerId) tr.style.background = "rgba(0, 229, 255, 0.2)";
+            tr.innerHTML = `<td>${i + 1}</td><td><i class="fa-solid ${e.avatar}" style="color:var(--primary); font-size:1.5rem;"></i></td><td>${e.name}</td><td>${e.score} pts</td>`;
+            tbody.appendChild(tr);
+        });
+    }
+
+    const btnNewLobby = document.getElementById('btn-new-lobby');
+    if(btnNewLobby) btnNewLobby.addEventListener('click', () => { window.limpiarSesionSupabase(); showGameScreen('test-lobby-screen'); });
+
 });

@@ -109,7 +109,6 @@ p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.2rem; }
 .control-btn:hover { color: var(--primary); }
 .slide-counter { font-family: var(--font-code); font-size: 1.1rem; font-weight: bold; min-width: 70px; text-align: center; white-space: nowrap !important; display: inline-block; }
 
-/* OVERLAY JUEGO */
 .hidden { display: none !important; }
 #game-overlay-wrapper { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-color); z-index: 999999; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 .btn-top-left { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.8); border: 1px solid var(--primary); color: var(--primary); padding: 8px 12px; font-family: var(--font-code); font-weight: bold; border-radius: 5px; cursor: pointer; transition: 0.3s; z-index: 100000; backdrop-filter: blur(5px);}
@@ -127,6 +126,7 @@ p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.2rem; }
 .players-list-box { text-align: left; margin-bottom: 1.5rem; max-height: 150px; overflow-y: auto; }
 .players-list-box ul { list-style: none; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; background: rgba(0,0,0,0.2); }
 .players-list-box li { padding: 8px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; font-size: 0.9rem;}
+.empty-list { color: var(--text-muted); font-style: italic; text-align: center; }
 
 .input-group { text-align: left; margin-bottom: 1rem; }
 .input-group label { display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary); font-size: 0.9rem;}
@@ -135,7 +135,6 @@ p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.2rem; }
 .avatars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 5px; }
 .avatar-option { aspect-ratio: 1; background: rgba(0,0,0,0.3); border: 2px solid var(--border-color); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
 .avatar-option.active, .avatar-option:hover { border-color: var(--primary); color: var(--primary); }
-.avatar-option.active { background: var(--primary-glow); color: #fff; box-shadow: 0 0 15px var(--primary-glow); }
 
 .waiting-animation { font-size: 3rem; color: var(--secondary); margin-bottom: 1.5rem; }
 #waiting-room-code { font-family: var(--font-code); font-size: 3.5rem; color: var(--primary); }
@@ -147,6 +146,7 @@ p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.2rem; }
 .timer-box { display: flex; align-items: center; gap: 10px; font-size: 1.2rem; font-weight: bold; color: var(--primary); position: relative; }
 .timer-bar-bg { position: absolute; bottom: -8px; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
 #timer-bar-fill { height: 100%; width: 100%; background: var(--primary); transition: width 1s linear; }
+.question-counter { font-family: var(--font-code); font-size: 1rem; color: var(--text-muted); }
 .question-box { background: var(--card-bg); padding: 2rem; border-radius: 16px; border: 2px solid var(--border-color); min-height: 150px; display: flex; align-items: center; justify-content: center; text-align: center; margin-bottom: 1.5rem; }
 #question-text { font-size: 1.4rem; font-weight: 500;}
 .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -190,30 +190,47 @@ p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.2rem; }
 }
 
 /* =========================================================
-   EXPORTACIÓN A PDF (Horizontal, con diseño oscuro y 10 páginas)
+   EXPORTACIÓN A PDF EXACTA (10 Páginas, Horizontal, Fondo Oscuro)
    ========================================================= */
-.pdf-export-mode {
-    width: 1920px !important;
-    background: var(--bg-color) !important;
+body.exporting-pdf {
     overflow: visible !important;
-    position: absolute;
-    top: 0; left: 0;
+    height: auto !important;
+    background-color: #05050a !important;
 }
-.pdf-export-mode .slide {
+body.exporting-pdf #main-presentation {
+    width: 1920px !important;
+    height: auto !important;
+    position: relative !important;
+    display: block !important;
+    overflow: visible !important;
+    background-color: #05050a !important;
+}
+body.exporting-pdf .slide {
     position: relative !important;
     width: 1920px !important;
-    height: 1080px !important; /* Formato 16:9 estricto */
-    display: flex !important;
+    height: 1080px !important; /* Formato 16:9 exacto */
+    display: flex !important; /* Mantiene el centrado vertical */
     opacity: 1 !important;
     visibility: visible !important;
     transform: none !important;
     page-break-after: always !important;
     page-break-inside: avoid !important;
-    background: var(--bg-color) !important;
+    background-color: #05050a !important;
     padding: 5% 10% !important;
     margin: 0 !important;
+    overflow: hidden !important; 
+    box-sizing: border-box !important;
 }
-.pdf-export-mode .presentation-controls { display: none !important; }
-/* Mantiene el diseño oscuro pero evita que se rompan las animaciones en el PDF */
-.pdf-export-mode .flip-card-inner { transform: none !important; }
-.pdf-export-mode .glowing-orb { display: none !important; } /* Evita destellos extraños en la impresión */
+body.exporting-pdf .presentation-controls,
+body.exporting-pdf #network-canvas,
+body.exporting-pdf #game-overlay-wrapper {
+    display: none !important;
+}
+/* Congelar animaciones para evitar bugs en la foto del PDF */
+body.exporting-pdf * {
+    transition: none !important;
+    animation: none !important;
+}
+body.exporting-pdf .flip-card-inner { transform: none !important; }
+body.exporting-pdf .glowing-orb { display: none !important; }
+body.exporting-pdf .chat-history { overflow: visible !important; height: auto !important;}

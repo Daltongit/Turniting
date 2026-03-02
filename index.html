@@ -23,7 +23,7 @@
                     Integrantes: Milton Fuel, Erik Yuquilema, Sebastian Paucar y Cristian Valenzuela.
                 </p>
                 <div class="delay-3" style="margin-top: 3rem;">
-                    <button id="btn-open-test" class="btn-cyber">
+                    <button class="btn-cyber btn-click-seguro" onclick="abrirTest()">
                         <i class="fa-solid fa-gamepad"></i> TEST INTERACTIVO
                     </button>
                 </div>
@@ -35,7 +35,7 @@
                 <div class="left-pane reveal-left">
                     <h2><i class="fa-solid fa-brain"></i> ¿Qué es realmente la IA?</h2>
                     <p>A nivel de software, la Inteligencia Artificial no es una mente consciente. Se trata del desarrollo de algoritmos y sistemas capaces de resolver problemas que normalmente requieren percepción, aprendizaje y razonamiento humano.</p>
-                    <p>En lugar de programar instrucciones rígidas paso a paso, la IA moderna utiliza modelos probabilísticos y estadísticos aprendiendo de grandes cantidades de datos.</p>
+                    <p>En lugar de programar instrucciones rígidas paso a paso (como en el software tradicional), la IA moderna utiliza modelos probabilísticos y estadísticos aprendiendo de grandes cantidades de datos.</p>
                 </div>
                 <div class="right-pane grid-2x2 reveal-right">
                     <div class="info-card 3d-card"><i class="fa-solid fa-microchip"></i><h3>IA Estrecha (ANI)</h3><p>Sistemas expertos en una sola tarea. Es la única IA real hoy en día.</p></div>
@@ -89,14 +89,16 @@
         </section>
 
         <section class="slide" id="slide-6">
-            <div class="content terminal-container reveal-up">
+            <div class="content terminal-container reveal-up" style="position: relative; z-index: 50;">
                 <h2><i class="fa-solid fa-terminal"></i> Simulador: El Juego de la Imitación</h2>
                 <p class="text-center max-w mb-2">Prueba interactiva del protocolo de Turing. Observa el flujo.</p>
                 <div class="chat-interface">
                     <div class="chat-header">Conexión Segura - Sujeto A (Juez) y Sujeto B (Entidad)</div>
                     <div class="chat-history" id="chat-history"></div>
                     <div class="chat-controls">
-                        <button id="btn-run-sim" class="btn-cyber"><i class="fa-solid fa-play"></i> EJECUTAR SIMULACIÓN</button>
+                        <button id="btn-run-sim" class="btn-cyber btn-click-seguro" onclick="iniciarSimulador()">
+                            <i class="fa-solid fa-play"></i> EJECUTAR SIMULACIÓN
+                        </button>
                     </div>
                 </div>
             </div>
@@ -146,16 +148,16 @@
         </section>
 
         <div class="presentation-controls">
-            <button id="prev-btn" class="control-btn"><i class="fa-solid fa-arrow-left"></i></button>
+            <button id="prev-btn" class="control-btn" onclick="moverAtras()"><i class="fa-solid fa-arrow-left"></i></button>
             <div class="slide-counter" id="current-slide-num">1 / 10</div>
-            <button id="next-btn" class="control-btn"><i class="fa-solid fa-arrow-right"></i></button>
+            <button id="next-btn" class="control-btn" onclick="moverAdelante()"><i class="fa-solid fa-arrow-right"></i></button>
         </div>
     </div>
 
 
     <div id="game-overlay-wrapper" class="hidden">
         
-        <button id="btn-close-test" class="btn-top-left">
+        <button class="btn-top-left btn-click-seguro" onclick="cerrarTest()">
             <i class="fa-solid fa-house"></i> INICIO
         </button>
 
@@ -167,7 +169,7 @@
                     <div class="lobby-panel host-panel">
                         <h3><i class="fa-solid fa-server"></i> Crear Sala (Anfitrión)</h3>
                         <div id="host-area-initial">
-                             <button id="btn-create-room" class="btn-cyber btn-full mt-2">Generar Código de Sala</button>
+                             <button id="btn-create-room" class="btn-cyber btn-full mt-2 btn-click-seguro">Generar Código de Sala</button>
                         </div>
                         <div id="host-area-active" class="hidden">
                             <div class="room-code-display mt-2"><span>CÓDIGO:</span><h1 class="glitch-text room-code-mobile" id="display-room-code">---</h1></div>
@@ -175,7 +177,7 @@
                                 <h4>Jugadores (<span id="player-count">0</span>)</h4>
                                 <ul id="host-player-list"><li class="empty-list">Esperando conexiones...</li></ul>
                             </div>
-                            <button id="btn-start-game-host" class="btn-cyber btn-full btn-success-cyber" disabled><i class="fa-solid fa-play"></i> Empezar Partida</button>
+                            <button id="btn-start-game-host" class="btn-cyber btn-full btn-success-cyber btn-click-seguro" disabled><i class="fa-solid fa-play"></i> Empezar Partida</button>
                         </div>
                     </div>
 
@@ -200,7 +202,7 @@
                             <label><i class="fa-solid fa-key"></i> Código de la Sala</label>
                             <input type="text" id="join-code-input" placeholder="XXXX" maxlength="4" style="text-transform: uppercase; letter-spacing: 3px; text-align: center; font-size: 1.5rem;">
                         </div>
-                        <button id="btn-join-room" class="btn-cyber btn-full mt-2"><i class="fa-solid fa-right-to-bracket"></i> Entrar a la Sala</button>
+                        <button id="btn-join-room" class="btn-cyber btn-full mt-2 btn-click-seguro"><i class="fa-solid fa-right-to-bracket"></i> Entrar a la Sala</button>
                     </div>
                 </div>
             </div>
@@ -243,7 +245,7 @@
                     </div>
                 </div>
                 <div class="final-actions mt-3">
-                    <button id="btn-new-lobby" class="btn-cyber"><i class="fa-solid fa-users-gear"></i> Salir de la Sala</button>
+                    <button id="btn-new-lobby" class="btn-cyber btn-click-seguro"><i class="fa-solid fa-users-gear"></i> Salir de la Sala</button>
                 </div>
             </div>
         </section>

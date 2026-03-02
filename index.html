@@ -18,9 +18,10 @@
             <div class="content text-center" style="position: relative; z-index: 50;">
                 <div class="glowing-orb"></div>
                 <h1 class="glitch-text" data-text="INTELIGENCIA ARTIFICIAL">INTELIGENCIA ARTIFICIAL</h1>
-                <h2 class="subtitle delay-1" style="font-weight: 700; margin-top: 1rem;">CARRERA DE COMPUTACIÓN - UPEC</h2>
-                <p class="intro-text delay-2" style="color: var(--text-muted); margin-top: 2rem;">
-                    Integrantes: Milton Fuel, Erik Yuquilema, Sebastian Paucar y Cristian Valenzuela.
+                <h2 class="subtitle delay-1" style="font-weight: 700; font-size: 2.2rem; margin-top: 1rem;">CARRERA DE COMPUTACIÓN - UPEC</h2>
+                <p class="intro-text delay-2" style="color: var(--text-muted); font-size: 1.1rem; margin-top: 2rem; max-width: 800px; margin-left: auto; margin-right: auto;">
+                    <strong>Integrantes:</strong> Milton Fuel, Erik Yuquilema, Sebastian Paucar y Cristian Valenzuela.<br><br>
+                    Una inmersión profunda en la arquitectura del pensamiento computacional, desde las bases lógicas de Turing hasta los Modelos Fundacionales modernos.
                 </p>
                 <div class="delay-3" style="margin-top: 3rem;">
                     <button class="btn-cyber btn-click-seguro" onclick="abrirTest()">
@@ -34,29 +35,66 @@
             <div class="content split-layout">
                 <div class="left-pane reveal-left">
                     <h2><i class="fa-solid fa-brain"></i> ¿Qué es realmente la IA?</h2>
-                    <p>A nivel de software, la Inteligencia Artificial no es una mente consciente. Se trata del desarrollo de algoritmos y sistemas capaces de resolver problemas que normalmente requieren percepción, aprendizaje y razonamiento humano.</p>
-                    <p>En lugar de programar instrucciones rígidas paso a paso (como en el software tradicional), la IA moderna utiliza modelos probabilísticos y estadísticos aprendiendo de grandes cantidades de datos.</p>
+                    <p>En las ciencias de la computación, la IA no es un "cerebro", sino la creación de <strong>Agentes Racionales</strong>. Son algoritmos que perciben su entorno y toman decisiones maximizando la probabilidad de éxito en una tarea.</p>
+                    <p>A diferencia del software clásico (donde el ingeniero escribe reglas estrictas <code>if-else</code>), el Machine Learning utiliza <strong>modelos estadísticos y álgebra lineal</strong> para que la máquina infiera sus propias reglas a partir del reconocimiento de patrones en datos masivos (Big Data).</p>
                 </div>
                 <div class="right-pane grid-2x2 reveal-right">
-                    <div class="info-card 3d-card"><i class="fa-solid fa-microchip"></i><h3>IA Estrecha (ANI)</h3><p>Sistemas expertos en una sola tarea. Es la única IA real hoy en día.</p></div>
-                    <div class="info-card 3d-card"><i class="fa-solid fa-globe"></i><h3>IA General (AGI)</h3><p>Capacidad cognitiva humana completa. Aún estamos a años de lograrlo.</p></div>
+                    <div class="flip-card 3d-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front info-card">
+                                <i class="fa-solid fa-microchip"></i><h3>IA Estrecha (ANI)</h3><p>(Pasa el cursor para ver más)</p>
+                            </div>
+                            <div class="flip-card-back">
+                                <h3>IA Estrecha</h3>
+                                <p>Diseñada para resolver un solo problema muy bien. Ejemplos: El algoritmo de recomendación de TikTok, ChatGPT o el Autopilot de Tesla. No tienen entendimiento del mundo real fuera de su entrenamiento.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card 3d-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front info-card">
+                                <i class="fa-solid fa-globe"></i><h3>IA General (AGI)</h3><p>(Pasa el cursor para ver más)</p>
+                            </div>
+                            <div class="flip-card-back" style="background: rgba(112, 0, 255, 0.8);">
+                                <h3>IA General</h3>
+                                <p>Un sistema hipotético con capacidad cognitiva humana. Podría aprender cualquier tarea intelectual. Es el objetivo final de empresas como OpenAI o DeepMind, pero plantea riesgos existenciales enormes.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section class="slide" id="slide-3">
-            <div class="content split-layout reverse">
-                <div class="left-pane reveal-right">
-                    <h2>Alan Turing: El Padre de la Computación</h2>
-                    <p>Alan Mathison Turing (1912-1954) fue un matemático, lógico y criptógrafo británico que sentó las bases del software actual.</p>
-                    <ul class="styled-list">
-                        <li><strong>La Máquina Enigma:</strong> Diseñó la "Bombe" durante la 2da Guerra Mundial, descifrando mensajes nazis.</li>
-                        <li><strong>Visión:</strong> Propuso que si una máquina puede manipular símbolos, también puede procesar lógica.</li>
-                        <li><strong>Muerte Prematura:</strong> Procesado en 1952, murió a los 41 años trágicamente.</li>
-                    </ul>
-                </div>
-                <div class="right-pane text-center reveal-left">
-                    <div class="image-frame 3d-card"><img src="img/turing.jpg" alt="Alan Turing"><div class="frame-caption">Alan Turing (1912-1954)</div></div>
+            <div class="content text-center">
+                <h2><i class="fa-solid fa-user-astronaut"></i> Alan Turing: El Arquitecto Lógico</h2>
+                <p class="max-w mb-2">Matemático y criptógrafo (1912-1954). Antes de que existiera el primer microprocesador, Turing definió matemáticamente cómo funcionaría todo el software del futuro.</p>
+                
+                <div class="grid-3x reveal-up delay-1">
+                    <div class="flip-card 3d-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front info-card"><i class="fa-solid fa-shield-halved"></i><h3>La Máquina Enigma</h3></div>
+                            <div class="flip-card-back">
+                                <p>Durante la 2da Guerra Mundial en Bletchley Park, diseñó la "Bombe", una máquina electromecánica que automatizó el descarte de claves para romper la criptografía nazi. Acortó la guerra 2 años y salvó 14 millones de vidas.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card 3d-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front info-card"><i class="fa-solid fa-dna"></i><h3>Morfogénesis</h3></div>
+                            <div class="flip-card-back">
+                                <p>Turing no solo pensó en máquinas. Fue pionero en biología matemática, creando ecuaciones de reacción-difusión para explicar cómo se forman los patrones en la naturaleza, como las manchas del leopardo o las rayas de la cebra.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flip-card 3d-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front info-card"><i class="fa-solid fa-gavel"></i><h3>El Trágico Final</h3></div>
+                            <div class="flip-card-back">
+                                <p>Pese a ser un héroe nacional, en 1952 fue condenado por "indecencia grave" (homosexualidad). Forzado a la castración química para evitar la cárcel, se suicidó a los 41 años con una manzana envenenada con cianuro.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -64,14 +102,21 @@
         <section class="slide" id="slide-4">
             <div class="content text-center">
                 <h2 class="reveal-up">La Máquina de Turing (1936)</h2>
-                <p class="max-w reveal-up delay-1">Turing diseñó teóricamente lo que hoy conocemos como la <strong>Arquitectura de Computadoras</strong>:</p>
+                <p class="max-w reveal-up delay-1">Propuesta en su ensayo sobre los números computables. <strong>Demostró matemáticamente qué es un algoritmo</strong>. Su modelo abstracto sentó las bases de la <em>Arquitectura de Von Neumann</em> que usan todas las PCs modernas.</p>
+                
                 <div class="turing-diagram reveal-up delay-2 mt-2">
-                    <div class="tape-ui"><div class="tape-track"><span>1</span><span>0</span><span>1</span><span class="highlight-cell">0</span><span>1</span><span>1</span></div><div class="head-ui"><i class="fa-solid fa-arrow-up"></i><br>Cabezal L/E (CPU)</div></div>
+                    <div class="tape-ui"><div class="tape-track"><span>1</span><span>0</span><span>1</span><span class="highlight-cell">0</span><span>1</span><span>1</span></div><div class="head-ui"><i class="fa-solid fa-arrow-up"></i><br>Cabezal L/E (CPU) + Cinta (RAM)</div></div>
                 </div>
+
                 <div class="math-container reveal-up delay-3 mt-2">
-                    <h3>El Modelo Lógico-Matemático</h3>
+                    <h3>Definición Formal de la Tupla</h3>
                     <div class="formula-box">$$M = \langle Q, \Gamma, b, \Sigma, \delta, q_0, F \rangle$$</div>
-                    <p class="math-desc"><strong>Q:</strong> Variables de estado | <strong>Σ:</strong> Inputs | <strong>δ:</strong> Función de transición (IF/ELSE).</p>
+                    <div class="grid-2x2 text-left" style="font-size: 0.95rem; color: #ccc;">
+                        <p><strong>Q:</strong> Conjunto finito de estados (memoria).</p>
+                        <p><strong>Γ:</strong> Alfabeto completo de la cinta.</p>
+                        <p><strong>Σ:</strong> Símbolos de entrada (Inputs del usuario).</p>
+                        <p><strong>δ (Delta):</strong> La Lógica. Indica al cabezal: qué leer, qué escribir y a dónde moverse.</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -80,25 +125,38 @@
             <div class="content split-layout">
                 <div class="left-pane reveal-left">
                     <h2>El Test de Turing (1950)</h2>
-                    <p>Turing decidió cambiar la pregunta "¿Pueden pensar las máquinas?" al <strong>Juego de la Imitación.</strong></p>
-                    <div class="highlight-box"><i class="fa-solid fa-quote-left"></i><p>Si un evaluador chatea a ciegas y no puede distinguir quién es la máquina y quién el humano, la máquina ha demostrado "inteligencia".</p></div>
-                    <p class="mt-2"><strong>Crítica (Habitación China):</strong> Una máquina puede simular respuestas perfectas sin entender el significado.</p>
+                    <p>Publicado en su paper <em>"Computing Machinery and Intelligence"</em>. Para evadir la filosofía, propuso el <strong>Juego de la Imitación</strong>.</p>
+                    <p>Un Juez (humano) interactúa por terminal de texto con una máquina y otro humano. Si la máquina logra engañar al juez el 30% del tiempo durante 5 minutos, supera la prueba.</p>
+                    <div class="danger-box mt-2">
+                        <h3 style="color: #ff5555; margin-bottom: 5px;"><i class="fa-solid fa-person-booth"></i> La Habitación China (Crítica)</h3>
+                        <p>John Searle argumentó que la máquina solo usa diccionarios sintácticos perfectos para responder, pero no posee "semántica" (no entiende el significado de las palabras). Simula inteligencia, pero carece de mente.</p>
+                    </div>
                 </div>
-                <div class="right-pane text-center reveal-right"><img src="img/test-turing.png" alt="Esquema del Test" class="diagram-img 3d-card"></div>
+                <div class="right-pane text-center reveal-right"><img src="img/test-turing.png" alt="Esquema del Test" class="diagram-img 3d-card" style="max-width: 100%;"></div>
             </div>
         </section>
 
         <section class="slide" id="slide-6">
-            <div class="content terminal-container reveal-up" style="position: relative; z-index: 50;">
+            <div class="content terminal-container reveal-up" style="position: relative; z-index: 50; max-width: 1100px;">
                 <h2><i class="fa-solid fa-terminal"></i> Simulador: El Juego de la Imitación</h2>
-                <p class="text-center max-w mb-2">Prueba interactiva del protocolo de Turing. Observa el flujo.</p>
-                <div class="chat-interface">
-                    <div class="chat-header">Conexión Segura - Sujeto A (Juez) y Sujeto B (Entidad)</div>
-                    <div class="chat-history" id="chat-history"></div>
-                    <div class="chat-controls">
-                        <button id="btn-run-sim" class="btn-cyber btn-click-seguro" onclick="iniciarSimulador()">
-                            <i class="fa-solid fa-play"></i> EJECUTAR SIMULACIÓN
-                        </button>
+                <p class="text-center mb-2">Observa cómo la máquina analiza el contexto para simular empatía y engañar al juez.</p>
+                
+                <div class="split-layout" style="gap: 2rem; align-items: start;">
+                    <div class="analysis-panel">
+                        <h3 style="color: var(--primary); font-size: 1.2rem;"><i class="fa-solid fa-microchip"></i> Consola Interna IA</h3>
+                        <ul id="ai-thought-process" class="thought-list">
+                            <li style="color: #666;">Esperando input del juez...</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="chat-interface" style="height: 400px; width: 100%;">
+                        <div class="chat-header">Terminal Segura - Juez vs Entidad B</div>
+                        <div class="chat-history" id="chat-history"></div>
+                        <div class="chat-controls">
+                            <button id="btn-run-sim" class="btn-cyber btn-click-seguro" onclick="iniciarSimuladorAvanzado()">
+                                <i class="fa-solid fa-play"></i> INICIAR PRUEBA
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -106,44 +164,99 @@
 
         <section class="slide" id="slide-7">
             <div class="content">
-                <h2 class="text-center reveal-up">Evolución: El Optimismo (Años 50s - 60s)</h2>
-                <div class="timeline-grid reveal-up delay-2">
-                    <div class="timeline-card 3d-card"><div class="year">1956</div><h3>Conferencia Dartmouth</h3><p>Nace formalmente la "Inteligencia Artificial".</p></div>
-                    <div class="timeline-card 3d-card"><div class="year">1958</div><h3>El Perceptrón</h3><p>Algoritmo inspirado en las neuronas. Limitado por hardware.</p></div>
-                    <div class="timeline-card 3d-card"><div class="year">1966</div><h3>ELIZA</h3><p>Primer chatbot que simulaba a un psicoterapeuta.</p></div>
+                <h2 class="text-center reveal-up">Fase 1: El Nacimiento (1950s - 1970s)</h2>
+                <p class="text-center max-w reveal-up delay-1">Sobraba optimismo. Se creía que la Inteligencia General (AGI) tomaría menos de una década de trabajo.</p>
+                
+                <div class="timeline-grid reveal-up delay-2 mt-3">
+                    <div class="flip-card 3d-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front info-card"><div class="year">1956</div><h3>Dartmouth</h3><p>(Pasa el cursor)</p></div>
+                            <div class="flip-card-back"><p>John McCarthy y Marvin Minsky reúnen a expertos. Acuñan el término "IA" y crean los primeros lenguajes simbólicos como LISP, diseñados para procesar listas y lógica matemática.</p></div>
+                        </div>
+                    </div>
+                    <div class="flip-card 3d-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front info-card"><div class="year">1958</div><h3>Perceptrón</h3><p>(Pasa el cursor)</p></div>
+                            <div class="flip-card-back"><p>Frank Rosenblatt crea la primera red neuronal artificial. Prometía aprender de datos, pero Marvin Minsky demostró matemáticamente que no podía resolver problemas no-lineales (XOR), pausando su avance.</p></div>
+                        </div>
+                    </div>
+                    <div class="flip-card 3d-card">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front info-card"><div class="year">1966</div><h3>Bot ELIZA</h3><p>(Pasa el cursor)</p></div>
+                            <div class="flip-card-back"><p>El MIT crea un programa que simula a un terapeuta. Usaba "Pattern Matching" (Coincidencia de patrones) para reformular las frases del usuario. La gente creyó que ELIZA los entendía realmente.</p></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section class="slide" id="slide-8">
             <div class="content">
-                <h2 class="text-center reveal-up">Sistemas Expertos y el "Invierno"</h2>
+                <h2 class="text-center reveal-up">Fase 2: Auge Comercial y el Invierno</h2>
+                <p class="text-center max-w reveal-up delay-1 mb-2">Las Redes Neuronales fueron abandonadas temporalmente a favor de la IA Simbólica Pura.</p>
                 <div class="split-layout mt-3">
-                    <div class="left-pane reveal-left"><div class="success-box"><h3><i class="fa-solid fa-sitemap"></i> Años 80: Sistemas Expertos</h3><p>Bases de datos con reglas lógicas (SI pasa A, ENTONCES B) en medicina y empresas.</p></div></div>
-                    <div class="right-pane reveal-right"><div class="danger-box"><h3><i class="fa-solid fa-snowflake"></i> Invierno de la IA</h3><p>Costos altísimos y falta de potencia estancaron la investigación.</p></div></div>
+                    <div class="left-pane reveal-left">
+                        <div class="success-box">
+                            <h3><i class="fa-solid fa-sitemap"></i> Los Sistemas Expertos (80s)</h3>
+                            <p>Programas de conocimiento encapsulado. Usaban motores de inferencia gigantes con millones de reglas del tipo <code>IF condición THEN acción</code>. <br><strong>Impacto:</strong> Fueron muy exitosos en Wall Street y en la medicina (ej. MYCIN para diagnósticos), simulando la toma de decisiones de profesionales.</p>
+                        </div>
+                    </div>
+                    <div class="right-pane reveal-right">
+                        <div class="danger-box">
+                            <h3><i class="fa-solid fa-snowflake"></i> El Invierno de la IA (90s)</h3>
+                            <p><strong>El problema:</strong> Los Sistemas Expertos no podían aprender. Si algo cambiaba, ingenieros debían reescribir todo a mano, volviéndolos insostenibles económicamente. Sumado a la baja memoria RAM de la época, la burbuja explotó y se cortaron todas las inversiones mundiales.</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section class="slide" id="slide-9">
             <div class="content">
-                <h2 class="text-center reveal-up">La Era Actual: Deep Learning</h2>
-                <div class="timeline-grid reveal-up delay-2">
-                    <div class="timeline-card 3d-card border-neon"><div class="year">2012</div><h3>AlexNet (CNN)</h3><p>Red Convolucional que rompió récords en visión artificial.</p></div>
-                    <div class="timeline-card 3d-card border-neon"><div class="year">2016</div><h3>AlphaGo</h3><p>Derrotó al campeón de Go usando Aprendizaje por Refuerzo.</p></div>
-                    <div class="timeline-card 3d-card border-neon"><div class="year">2017+</div><h3>Transformers</h3><p>Base de los LLMs modernos (ChatGPT, Gemini) para entender contexto.</p></div>
+                <h2 class="text-center reveal-up">Fase 3: La Explosión del Deep Learning</h2>
+                <p class="text-center max-w reveal-up delay-1">El Internet proporcionó los Datos (Big Data) y los Gamers proporcionaron el Hardware (GPUs). El Conexionismo resucitó.</p>
+                
+                <div class="timeline-grid reveal-up delay-2 mt-3">
+                    <div class="flip-card 3d-card border-neon">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front info-card"><div class="year">2012</div><h3>AlexNet (CNN)</h3><p>(Visión Artificial)</p></div>
+                            <div class="flip-card-back" style="background: rgba(0, 229, 255, 0.2);"><p>Una Red Neuronal Convolucional (CNN) arrasa en la competencia ImageNet. Logró reconocer patrones visuales extrayendo características píxel por píxel, revolucionando el campo visual.</p></div>
+                        </div>
+                    </div>
+                    <div class="flip-card 3d-card border-neon">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front info-card"><div class="year">2016</div><h3>AlphaGo</h3><p>(Machine Learning)</p></div>
+                            <div class="flip-card-back" style="background: rgba(0, 229, 255, 0.2);"><p>A diferencia del ajedrez (fuerza bruta), el juego 'Go' requería "intuición". DeepMind usó Aprendizaje por Refuerzo, poniendo al algoritmo a jugar millones de veces contra sí mismo para aprender tácticas.</p></div>
+                        </div>
+                    </div>
+                    <div class="flip-card 3d-card border-neon">
+                        <div class="flip-card-inner">
+                            <div class="flip-card-front info-card"><div class="year">2017</div><h3>Transformers</h3><p>(Procesamiento de Lenguaje)</p></div>
+                            <div class="flip-card-back" style="background: rgba(0, 229, 255, 0.2);"><p>Google publica el paper <em>"Attention Is All You Need"</em>. Esto permitió a la IA procesar frases enteras en paralelo, recordando el contexto de textos larguísimos. Es el cerebro detrás de ChatGPT.</p></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section class="slide" id="slide-10">
             <div class="content text-center">
-                <h2 class="reveal-up">Impacto y Desafíos</h2>
+                <h2 class="reveal-up">Ingeniería del Futuro: Ética y Desafíos</h2>
+                <p class="intro-text max-w reveal-up delay-1">Ya no se trata solo de hacer modelos predictivos exactos, sino de garantizar que sean seguros y explicables para la sociedad.</p>
+                
                 <div class="grid-2x2 mt-3 reveal-up delay-2">
-                    <div class="info-card"><i class="fa-solid fa-code-branch"></i><h3>La Caja Negra</h3><p>El proceso de decisión de una red profunda es a menudo incomprensible.</p></div>
-                    <div class="info-card"><i class="fa-solid fa-shield-halved"></i><h3>Seguridad y Datos</h3><p>Las IAs heredan sesgos. El reto es auditar algoritmos y proteger la privacidad.</p></div>
+                    <div class="info-card text-left">
+                        <i class="fa-solid fa-magnifying-glass-chart"></i>
+                        <h3>Falta de Explicabilidad (Caja Negra)</h3>
+                        <p>En el Deep Learning, sabemos el Input y el Output, pero la red oculta tiene millones de pesos matemáticos incomprensibles. Si una IA deniega un crédito bancario, el ingeniero no puede explicar el "por qué" exacto.</p>
+                    </div>
+                    <div class="info-card text-left">
+                        <i class="fa-solid fa-scale-unbalanced"></i>
+                        <h3>Sesgos y Prejuicios en Datos</h3>
+                        <p>Si entrenamos a una IA con datos históricos que contienen racismo o machismo, el algoritmo asumirá que la discriminación es el estado "correcto" (Overfitting), automatizando y agravando problemas sociales.</p>
+                    </div>
                 </div>
-                <h3 class="mt-3 reveal-up delay-3 glitch-text" data-text="Gracias por su atención">Gracias por su atención</h3>
+                <h3 class="mt-3 reveal-up delay-3 glitch-text" data-text="FIN DE LA PRESENTACIÓN">FIN DE LA PRESENTACIÓN</h3>
             </div>
         </section>
 
@@ -151,6 +264,10 @@
             <button id="prev-btn" class="control-btn" onclick="moverAtras()"><i class="fa-solid fa-arrow-left"></i></button>
             <div class="slide-counter" id="current-slide-num">1 / 10</div>
             <button id="next-btn" class="control-btn" onclick="moverAdelante()"><i class="fa-solid fa-arrow-right"></i></button>
+            
+            <button class="btn-cyber" style="padding: 5px 15px; font-size: 1rem; border-color: #ff3355; color: #ff3355; margin-left: 10px;" onclick="exportarPDF()">
+                <i class="fa-solid fa-file-pdf"></i> PDF
+            </button>
         </div>
     </div>
 
@@ -158,12 +275,12 @@
     <div id="game-overlay-wrapper" class="hidden">
         
         <button class="btn-top-left btn-click-seguro" onclick="cerrarTest()">
-            <i class="fa-solid fa-house"></i> INICIO
+            <i class="fa-solid fa-house"></i> VOLVER A LA PRESENTACIÓN
         </button>
 
         <section id="test-lobby-screen" class="game-screen active-game-screen">
             <div class="content text-center">
-                <h2 class="mobile-title"><i class="fa-solid fa-headset"></i> Zona de Pruebas</h2>
+                <h2 class="mobile-title"><i class="fa-solid fa-headset"></i> Zona de Evaluación</h2>
                 
                 <div class="lobby-grid mt-2">
                     <div class="lobby-panel host-panel">
@@ -254,6 +371,8 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <script src="js/main.js"></script>
 </body>
 </html>

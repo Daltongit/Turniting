@@ -80,38 +80,40 @@ window.iniciarSimuladorAvanzado = async function() {
 };
 
 // =========================================================================
-// NUEVO SISTEMA DE EXPORTACIÓN A PDF (HORIZONTAL 16:9, TEMA OSCURO)
+// NUEVO SISTEMA DE EXPORTACIÓN A PDF (10 Páginas Exactas, Horizontal)
 // =========================================================================
 window.exportarPDF = function() {
     if(typeof html2pdf === 'undefined') { alert("Cargando librerías, intenta en un segundo."); return; }
     
-    // 1. Poner pantalla de carga visual (Porque tomará unos segundos)
+    // 1. Poner pantalla de carga visual 
     const loader = document.createElement('div');
     loader.id = 'pdf-loader';
     loader.style = "position:fixed; top:0;left:0; width:100vw;height:100vh; background:rgba(5,5,10,0.95); color:#00e5ff; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999999; font-family:'Fira Code', monospace;";
     loader.innerHTML = "<i class='fa-solid fa-spinner fa-spin' style='font-size:4rem; margin-bottom:20px;'></i> <p style='font-size:1.5rem; font-weight:bold;'>Generando PDF en Alta Calidad...</p><p style='font-size:1rem; color:#aaa;'>(Por favor espera, procesando las 10 diapositivas...)</p>";
     document.body.appendChild(loader);
 
-    // 2. Aplicar la clase al BODY para romper el 'overflow: hidden' y permitir el escaneo vertical
+    // 2. Aplicar la clase al BODY para romper el 'overflow: hidden' y alinear las 10 diapos
     document.body.classList.add('exporting-pdf');
 
-    // 3. Darle 500ms al navegador para que dibuje el DOM de 10 páginas antes de tomar la foto
+    // 3. Darle 1 segundo al navegador para que redibuje el HTML en formato vertical largo
     setTimeout(() => {
         const element = document.getElementById('main-presentation');
         
         const opt = {
-            margin:       0, // Sin márgenes, foto a pantalla completa
+            margin:       0, // Sin márgenes
             filename:     'Presentacion_IA_UPEC.pdf',
-            image:        { type: 'jpeg', quality: 1 }, // Máxima calidad
+            image:        { type: 'jpeg', quality: 1 },
             html2canvas:  { 
-                scale: 2, // Retina display
+                scale: 2, 
                 useCORS: true, 
                 backgroundColor: '#05050a', 
-                width: 1920, 
+                width: 1920,
                 windowWidth: 1920,
-                scrollY: 0 // Evita recortes si estabas scrolleando
+                scrollY: 0
             },
-            jsPDF: { unit: 'px', format: [1920, 1080], orientation: 'landscape', hotfixes: ["px_scaling"] }
+            // Forzamos formato horizontal (landscape) y resolución 1920x1080 exactos por página
+            jsPDF: { unit: 'px', format: [1920, 1080], orientation: 'landscape', hotfixes: ["px_scaling"] },
+            pagebreak: { mode: 'css', avoid: '.slide-no-break' }
         };
 
         html2pdf().set(opt).from(element).save().then(() => {
@@ -119,14 +121,16 @@ window.exportarPDF = function() {
             document.body.classList.remove('exporting-pdf');
             const ld = document.getElementById('pdf-loader');
             if(ld) document.body.removeChild(ld);
+            window.actualizarUI(); 
         }).catch(err => {
             console.error(err);
             alert("Error al generar el PDF.");
             document.body.classList.remove('exporting-pdf');
             const ld = document.getElementById('pdf-loader');
             if(ld) document.body.removeChild(ld);
+            window.actualizarUI();
         });
-    }, 500); 
+    }, 1000); 
 };
 
 window.mostrarPantallaJuego = function(screenId) {
@@ -154,7 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================================
-    // 3. SISTEMA MULTIJUGADOR SUPABASE (Aislado)
+    // 3. SISTEMA MULTIJUGADOR SUPABASE 
     // =========================================================================
     const questionPool = [
         { q: "A nivel de software, ¿qué es la IA moderna?", options: ["Una mente consciente artificial", "Modelos probabilísticos que aprenden de datos", "Instrucciones rígidas paso a paso", "Un cerebro biológico simulado"], a: 1 },

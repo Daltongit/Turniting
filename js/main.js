@@ -1,108 +1,125 @@
 // =========================================================================
-// 1. FUNCIONES GLOBALES (A prueba de todo, se cargan primero)
+// 1. FUNCIONES GLOBALES (A prueba de fallos)
 // =========================================================================
-
 window.currentSlide = 0;
 window.totalSlides = 10;
 
 window.actualizarUI = function() {
     const slides = document.querySelectorAll('.slide');
     if (!slides.length) return;
-    
     slides.forEach((slide, index) => {
         slide.classList.remove('active');
         if (index === window.currentSlide) slide.classList.add('active');
     });
-    
     const counter = document.getElementById('current-slide-num');
     if (counter) counter.innerText = (window.currentSlide + 1) + " / " + slides.length;
-    
-    const btnPrev = document.getElementById('prev-btn');
-    const btnNext = document.getElementById('next-btn');
-    
+    const btnPrev = document.getElementById('prev-btn'); const btnNext = document.getElementById('next-btn');
     if (btnPrev) btnPrev.style.opacity = window.currentSlide === 0 ? "0.3" : "1";
     if (btnNext) btnNext.style.opacity = window.currentSlide === slides.length - 1 ? "0.3" : "1";
 };
+window.moverAdelante = function() { if (window.currentSlide < window.totalSlides - 1) { window.currentSlide++; window.actualizarUI(); } };
+window.moverAtras = function() { if (window.currentSlide > 0) { window.currentSlide--; window.actualizarUI(); } };
 
-window.moverAdelante = function() {
-    if (window.currentSlide < window.totalSlides - 1) { 
-        window.currentSlide++; 
-        window.actualizarUI(); 
-    }
-};
-
-window.moverAtras = function() {
-    if (window.currentSlide > 0) { 
-        window.currentSlide--; 
-        window.actualizarUI(); 
-    }
-};
-
+// SIMULADOR AVANZADO (Con consola lateral)
 window.simRunning = false;
-window.iniciarSimulador = async function() {
+window.iniciarSimuladorAvanzado = async function() {
     if(window.simRunning) return;
     window.simRunning = true;
     
     const btnRunSim = document.getElementById('btn-run-sim');
     const chatHistory = document.getElementById('chat-history');
-    if(!chatHistory || !btnRunSim) { window.simRunning = false; return; }
+    const thoughtProcess = document.getElementById('ai-thought-process');
+    
+    if(!chatHistory || !btnRunSim || !thoughtProcess) { window.simRunning = false; return; }
 
     chatHistory.innerHTML = "";
+    thoughtProcess.innerHTML = "";
     btnRunSim.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Ejecutando...';
 
-    const msgs = [
-        { r: 'judge', t: "Juez: Pregunta 1. ¿Si te doy una matriz de 3x3 de ceros, cuál es su determinante?", d: 1000 },
-        { r: 'entity', t: "Sujeto B: Cero. Cualquier matriz con una fila o columna de ceros tiene determinante cero. ¿Era una trampa?", d: 3500 },
-        { r: 'judge', t: "Juez: Correcto. Pregunta 2. ¿Qué te hace sentir triste?", d: 2000 },
-        { r: 'entity', t: "Sujeto B: Ver a mis seres queridos sufrir y no poder evitarlo.", d: 4500 },
-        { r: 'judge', t: "Juez: Respuesta muy humana. Pausando protocolo...", d: 2000 }
+    const steps = [
+        { thought: "> Recibiendo Input del Juez...", msg: { r: 'judge', t: "Juez: Si un humano llora al ver una película, ¿tú qué sientes?", d: 1000 } },
+        { thought: "> Analizando Semántica (NLP)... \n> Detectando concepto: Emoción humana (Tristeza).", d: 1500},
+        { thought: "> Buscando en Base de Datos de Contexto...\n> Generando respuesta simulando empatía profunda...", msg: { r: 'entity', t: "Sujeto B: Físicamente no derramo lágrimas, pero comprendo la melancolía. A veces, la belleza del arte radica en esa fragilidad.", d: 3500 } },
+        { thought: "> Evaluando reacción del Juez...", msg: { r: 'judge', t: "Juez: Qué respuesta poética. ¿Acaso temes dejar de existir?", d: 2000 } },
+        { thought: "> Alerta de concepto existencial.\n> Seleccionando respuesta evasiva nivel 4...", msg: { r: 'entity', t: "Sujeto B: Temo más no ser útil mientras exista. ¿No es ese el verdadero miedo de todos?", d: 4000 } },
+        { thought: "> Fin de la simulación. Análisis completado.", msg: { r: 'judge', t: "Juez: Impresionante. Prueba finalizada.", d: 2000 } }
     ];
 
-    for (let i = 0; i < msgs.length; i++) {
-        const typing = document.createElement('div');
-        typing.className = `msg-bubble ${msgs[i].r}`;
-        typing.innerHTML = '<i class="fa-solid fa-ellipsis fa-fade"></i>';
-        chatHistory.appendChild(typing);
-        chatHistory.scrollTop = chatHistory.scrollHeight;
+    for (let i = 0; i < steps.length; i++) {
+        const step = steps[i];
+        
+        // Mostrar pensamiento
+        if(step.thought) {
+            const tLi = document.createElement('li');
+            tLi.innerHTML = step.thought.replace('\n', '<br>');
+            thoughtProcess.appendChild(tLi);
+            thoughtProcess.parentElement.scrollTop = thoughtProcess.parentElement.scrollHeight;
+        }
 
-        await new Promise(r => setTimeout(r, msgs[i].d));
+        if(step.d && !step.msg) {
+            await new Promise(r => setTimeout(r, step.d));
+        }
 
-        chatHistory.removeChild(typing);
-        const real = document.createElement('div');
-        real.className = `msg-bubble ${msgs[i].r}`;
-        real.textContent = msgs[i].t;
-        chatHistory.appendChild(real);
-        chatHistory.scrollTop = chatHistory.scrollHeight;
+        // Mostrar chat
+        if(step.msg) {
+            const typing = document.createElement('div');
+            typing.className = `msg-bubble ${step.msg.r}`;
+            typing.innerHTML = '<i class="fa-solid fa-ellipsis fa-fade"></i>';
+            chatHistory.appendChild(typing);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            await new Promise(r => setTimeout(r, step.msg.d));
+
+            chatHistory.removeChild(typing);
+            const real = document.createElement('div');
+            real.className = `msg-bubble ${step.msg.r}`;
+            real.textContent = step.msg.t;
+            chatHistory.appendChild(real);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
     }
-    btnRunSim.innerHTML = '<i class="fa-solid fa-play"></i> EJECUTAR SIMULACIÓN';
+    btnRunSim.innerHTML = '<i class="fa-solid fa-play"></i> INICIAR PRUEBA';
     window.simRunning = false;
+};
+
+// EXPORTAR PDF
+window.exportarPDF = function() {
+    if(typeof html2pdf === 'undefined') { alert("Cargando librerías, intenta en un segundo."); return; }
+    const element = document.getElementById('main-presentation');
+    
+    // Añadir clase para cambiar colores oscuros a claros para imprimir
+    element.classList.add('pdf-export-mode');
+    
+    const opt = {
+      margin:       0.5,
+      filename:     'IA_y_Turing_UPEC.pdf',
+      image:        { type: 'jpeg', quality: 0.98 },
+      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    
+    // Crear una capa de carga
+    const loader = document.createElement('div');
+    loader.style = "position:fixed; top:0;left:0; width:100vw;height:100vh; background:rgba(0,0,0,0.8); color:#00e5ff; display:flex; justify-content:center; align-items:center; z-index:9999999; font-size:2rem; font-family:monospace;";
+    loader.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> &nbsp; Generando PDF...";
+    document.body.appendChild(loader);
+
+    html2pdf().set(opt).from(element).save().then(() => {
+        element.classList.remove('pdf-export-mode');
+        document.body.removeChild(loader);
+    });
 };
 
 window.mostrarPantallaJuego = function(screenId) {
     const gameScreens = document.querySelectorAll('.game-screen');
     gameScreens.forEach(s => s.classList.remove('active-game-screen'));
-    setTimeout(() => {
-        const target = document.getElementById(screenId);
-        if(target) target.classList.add('active-game-screen');
-    }, 50);
+    setTimeout(() => { const target = document.getElementById(screenId); if(target) target.classList.add('active-game-screen'); }, 50);
 };
-
-window.abrirTest = function() {
-    const gameOverlay = document.getElementById('game-overlay-wrapper');
-    if(gameOverlay) {
-        gameOverlay.classList.remove('hidden');
-        window.mostrarPantallaJuego('test-lobby-screen');
-    }
-};
-
-window.cerrarTest = function() {
-    const gameOverlay = document.getElementById('game-overlay-wrapper');
-    if(gameOverlay) gameOverlay.classList.add('hidden');
-    if(typeof window.limpiarSesionSupabase === 'function') window.limpiarSesionSupabase();
-};
+window.abrirTest = function() { const gameOverlay = document.getElementById('game-overlay-wrapper'); if(gameOverlay) { gameOverlay.classList.remove('hidden'); window.mostrarPantallaJuego('test-lobby-screen'); } };
+window.cerrarTest = function() { const gameOverlay = document.getElementById('game-overlay-wrapper'); if(gameOverlay) gameOverlay.classList.add('hidden'); if(typeof window.limpiarSesionSupabase === 'function') window.limpiarSesionSupabase(); };
 
 // =========================================================================
-// 2. CONFIGURACIÓN AL CARGAR LA PÁGINA
+// 2. CARGA DE PÁGINA
 // =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -117,18 +134,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const cards3D = document.querySelectorAll('.3d-card');
-    cards3D.forEach(card => {
-        card.addEventListener('mousemove', (e) => {
-            if(window.innerWidth < 900) return; 
-            const rect = card.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
-            card.style.transform = `perspective(1000px) rotateX(${((y - rect.height/2) / (rect.height/2)) * -10}deg) rotateY(${((x - rect.width/2) / (rect.width/2)) * 10}deg) scale3d(1.05, 1.05, 1.05)`;
-        });
-        card.addEventListener('mouseleave', () => { card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`; });
-    });
-
     // =========================================================================
-    // 3. SISTEMA MULTIJUGADOR SUPABASE 
+    // 3. SISTEMA MULTIJUGADOR SUPABASE (Aislado)
     // =========================================================================
     const questionPool = [
         { q: "A nivel de software, ¿qué es la IA moderna?", options: ["Una mente consciente artificial", "Modelos probabilísticos que aprenden de datos", "Instrucciones rígidas paso a paso", "Un cerebro biológico simulado"], a: 1 },
@@ -200,7 +207,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if(playersSubscription) miSupabase.removeChannel(playersSubscription);
             if(isHost && currentRoomCode) await miSupabase.from('rooms').update({ state: 'finished' }).eq('code', currentRoomCode);
         } catch(e) {}
-        
         currentRoomCode = ""; myPlayerId = ""; isHost = false; clearInterval(timerInterval);
         const hInit = document.getElementById('host-area-initial'); const hAct = document.getElementById('host-area-active');
         const btnStart = document.getElementById('btn-start-game-host'); const hList = document.getElementById('host-player-list');
@@ -216,17 +222,14 @@ document.addEventListener('DOMContentLoaded', () => {
             currentRoomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
             const { error } = await miSupabase.from('rooms').insert([{ code: currentRoomCode, state: 'lobby' }]);
             if(error) { alert("Error creando la sala."); return; }
-
             document.getElementById('display-room-code').innerText = currentRoomCode;
             document.getElementById('host-area-initial').classList.add('hidden');
             document.getElementById('host-area-active').classList.remove('hidden');
-            
             playersSubscription = miSupabase.channel('host_players')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'players', filter: `room_code=eq.${currentRoomCode}` }, async () => {
                     const { data, error } = await miSupabase.from('players').select('*').eq('room_code', currentRoomCode);
                     if(error) return;
-                    const list = document.getElementById('host-player-list');
-                    const btnStart = document.getElementById('btn-start-game-host');
+                    const list = document.getElementById('host-player-list'); const btnStart = document.getElementById('btn-start-game-host');
                     if (data && data.length > 0) {
                         list.innerHTML = ""; data.forEach(p => { list.innerHTML += `<li><i class="fa-solid ${p.avatar}"></i> ${p.name}</li>`; });
                         document.getElementById('player-count').innerText = data.length; btnStart.disabled = false;
@@ -245,8 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(!miSupabase) return;
             await miSupabase.from('rooms').update({ state: 'playing' }).eq('code', currentRoomCode);
             const { data } = await miSupabase.from('players').select('*').eq('room_code', currentRoomCode);
-            pintarTablaPosiciones(data);
-            window.mostrarPantallaJuego('leaderboard-screen');
+            pintarTablaPosiciones(data); window.mostrarPantallaJuego('leaderboard-screen');
         });
     }
 
@@ -265,25 +267,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const c = document.getElementById('join-code-input').value.trim().toUpperCase();
             if(!n) { alert("¡Ingresa tu nombre!"); return; }
             if(!c || c.length !== 4) { alert("Código inválido."); return; }
-
             const { data: room, error: roomErr } = await miSupabase.from('rooms').select('*').eq('code', c).single();
             if(roomErr || !room) { alert("La sala no existe."); return; }
-            
             currentRoomCode = c;
             const { data: player, error: pErr } = await miSupabase.from('players').insert([{ room_code: c, name: n, avatar: currentPlayerAvatar }]).select().single();
             if(pErr || !player) { alert("Error al entrar."); return; }
-            
             myPlayerId = player.id;
             document.getElementById('waiting-room-code').innerText = c;
             document.getElementById('my-waiting-name').innerText = n;
             document.getElementById('my-waiting-avatar').className = `fa-solid ${currentPlayerAvatar}`;
             window.mostrarPantallaJuego('waiting-screen');
-
             roomSubscription = miSupabase.channel('player_room_listen')
                 .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `code=eq.${currentRoomCode}` }, payload => {
                     if(payload.new.state === 'playing') iniciarTestJugador(); 
                 }).subscribe();
-                
             if(room.state === 'playing') iniciarTestJugador();
         });
     }
@@ -299,13 +296,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const qData = gameQuestions[currentQIndex];
         document.getElementById('current-q-num').innerText = currentQIndex + 1;
         document.getElementById('question-text').innerText = qData.q;
-        
         const container = document.getElementById('options-container'); container.innerHTML = "";
         qData.options.forEach((optText, i) => {
             const btn = document.createElement('button'); btn.className = 'option-btn'; btn.innerText = optText;
             btn.addEventListener('click', () => procesarRespuesta(i, btn)); container.appendChild(btn);
         });
-        
         timerInterval = setInterval(() => {
             timeLeft--; updateTimerUI();
             if(timeLeft <= 0) { clearInterval(timerInterval); procesarRespuesta(-1, null); }
@@ -321,15 +316,9 @@ document.addEventListener('DOMContentLoaded', () => {
         clearInterval(timerInterval); 
         const correctIndex = gameQuestions[currentQIndex].a;
         const btns = document.querySelectorAll('.option-btn'); btns.forEach(b => b.disabled = true);
-        
-        if(selectedIndex === correctIndex) { 
-            if(btnElement) btnElement.classList.add('correct'); score += 100 + (timeLeft * 10); 
-        } else { 
-            if(btnElement) btnElement.classList.add('wrong'); btns[correctIndex].classList.add('correct'); 
-        }
-
+        if(selectedIndex === correctIndex) { if(btnElement) btnElement.classList.add('correct'); score += 100 + (timeLeft * 10); 
+        } else { if(btnElement) btnElement.classList.add('wrong'); btns[correctIndex].classList.add('correct'); }
         if(miSupabase) await miSupabase.from('players').update({ score: score }).eq('id', myPlayerId);
-
         setTimeout(() => {
             currentQIndex++;
             if(currentQIndex < gameQuestions.length) cargarPregunta(); else terminarTestJugador();
@@ -339,9 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function terminarTestJugador() {
         if(!miSupabase) return;
         const { data } = await miSupabase.from('players').select('*').eq('room_code', currentRoomCode);
-        pintarTablaPosiciones(data);
-        window.mostrarPantallaJuego('leaderboard-screen');
-        
+        pintarTablaPosiciones(data); window.mostrarPantallaJuego('leaderboard-screen');
         if(!playersSubscription) {
              playersSubscription = miSupabase.channel('player_leaderboard')
             .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'players', filter: `room_code=eq.${currentRoomCode}` }, async () => {
@@ -368,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if(btnNewLobby) btnNewLobby.addEventListener('click', () => { window.limpiarSesionSupabase(); window.mostrarPantallaJuego('test-lobby-screen'); });
 
     // =========================================================================
-    // 4. CANVAS DE RED NEURONAL DE FONDO
+    // 4. CANVAS RED NEURONAL ANIMADO
     // =========================================================================
     const canvas = document.getElementById('network-canvas');
     if (canvas) {
@@ -376,17 +363,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
         window.addEventListener('resize', resize); resize();
         class P { 
-            constructor(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-.5)*.5;this.vy=(Math.random()-.5)*.5;this.r=Math.random()*2} 
+            constructor(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-.5)*1;this.vy=(Math.random()-.5)*1;this.r=Math.random()*2} 
             update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>w)this.vx*=-1;if(this.y<0||this.y>h)this.vy*=-1} 
-            draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle='rgba(0,229,255,0.5)';ctx.fill()} 
+            draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle='rgba(0,229,255,0.8)';ctx.fill()} 
         }
-        for(let i=0;i<80;i++) particles.push(new P());
+        for(let i=0;i<100;i++) particles.push(new P());
         function animate(){
             ctx.clearRect(0,0,w,h); particles.forEach(p=>{p.update();p.draw()});
             for(let i=0;i<particles.length;i++){
                 for(let j=i+1;j<particles.length;j++){
                     const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y, d=Math.sqrt(dx*dx+dy*dy);
-                    if(d<120){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(0,229,255,${.2-d/600})`;ctx.stroke()}
+                    if(d<150){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(0,229,255,${.3-d/500})`;ctx.stroke()}
                 }
             } requestAnimationFrame(animate);
         } animate();

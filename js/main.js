@@ -1,45 +1,132 @@
+// =========================================================================
+// 1. FUNCIONES GLOBALES (A prueba de todo, se cargan primero)
+// =========================================================================
+
+// --- Variables para la Presentación ---
+window.currentSlide = 0;
+window.totalSlides = 10;
+
+// Funciones para moverse en las Diapositivas
+window.actualizarUI = function() {
+    const slides = document.querySelectorAll('.slide');
+    if (!slides.length) return;
+    
+    slides.forEach((slide, index) => {
+        slide.classList.remove('active');
+        if (index === window.currentSlide) slide.classList.add('active');
+    });
+    
+    const counter = document.getElementById('current-slide-num');
+    if (counter) counter.innerText = (window.currentSlide + 1) + " / " + slides.length;
+    
+    const btnPrev = document.getElementById('prev-btn');
+    const btnNext = document.getElementById('next-btn');
+    
+    if (btnPrev) btnPrev.style.opacity = window.currentSlide === 0 ? "0.3" : "1";
+    if (btnNext) btnNext.style.opacity = window.currentSlide === slides.length - 1 ? "0.3" : "1";
+};
+
+window.moverAdelante = function() {
+    if (window.currentSlide < window.totalSlides - 1) { 
+        window.currentSlide++; 
+        window.actualizarUI(); 
+    }
+};
+
+window.moverAtras = function() {
+    if (window.currentSlide > 0) { 
+        window.currentSlide--; 
+        window.actualizarUI(); 
+    }
+};
+
+// Funciones para el Simulador
+window.simRunning = false;
+window.iniciarSimulador = async function() {
+    if(window.simRunning) return;
+    window.simRunning = true;
+    
+    const btnRunSim = document.getElementById('btn-run-sim');
+    const chatHistory = document.getElementById('chat-history');
+    if(!chatHistory || !btnRunSim) { window.simRunning = false; return; }
+
+    chatHistory.innerHTML = "";
+    btnRunSim.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Ejecutando...';
+
+    const msgs = [
+        { r: 'judge', t: "Juez: Pregunta 1. ¿Si te doy una matriz de 3x3 de ceros, cuál es su determinante?", d: 1000 },
+        { r: 'entity', t: "Sujeto B: Cero. Cualquier matriz con una fila o columna de ceros tiene determinante cero. ¿Era una trampa?", d: 3500 },
+        { r: 'judge', t: "Juez: Correcto. Pregunta 2. ¿Qué te hace sentir triste?", d: 2000 },
+        { r: 'entity', t: "Sujeto B: Ver a mis seres queridos sufrir y no poder evitarlo.", d: 4500 },
+        { r: 'judge', t: "Juez: Respuesta muy humana. Pausando protocolo...", d: 2000 }
+    ];
+
+    for (let i = 0; i < msgs.length; i++) {
+        const typing = document.createElement('div');
+        typing.className = `msg-bubble ${msgs[i].r}`;
+        typing.innerHTML = '<i class="fa-solid fa-ellipsis fa-fade"></i>';
+        chatHistory.appendChild(typing);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+
+        await new Promise(r => setTimeout(r, msgs[i].d));
+
+        chatHistory.removeChild(typing);
+        const real = document.createElement('div');
+        real.className = `msg-bubble ${msgs[i].r}`;
+        real.textContent = msgs[i].t;
+        chatHistory.appendChild(real);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+    btnRunSim.innerHTML = '<i class="fa-solid fa-play"></i> EJECUTAR SIMULACIÓN';
+    window.simRunning = false;
+};
+
+// Funciones para el Test Interactivo
+window.mostrarPantallaJuego = function(screenId) {
+    const gameScreens = document.querySelectorAll('.game-screen');
+    gameScreens.forEach(s => s.classList.remove('active-game-screen'));
+    setTimeout(() => {
+        const target = document.getElementById(screenId);
+        if(target) target.classList.add('active-game-screen');
+    }, 50);
+};
+
+window.abrirTest = function() {
+    const gameOverlay = document.getElementById('game-overlay-wrapper');
+    if(gameOverlay) {
+        gameOverlay.classList.remove('hidden');
+        window.mostrarPantallaJuego('test-lobby-screen');
+    }
+};
+
+window.cerrarTest = function() {
+    const gameOverlay = document.getElementById('game-overlay-wrapper');
+    if(gameOverlay) gameOverlay.classList.add('hidden');
+    if(typeof window.limpiarSesionSupabase === 'function') window.limpiarSesionSupabase();
+};
+
+// =========================================================================
+// 2. CONFIGURACIÓN AL CARGAR LA PÁGINA
+// =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
 
-    // =========================================================================
-    // BLOQUE 1: LA PRESENTACIÓN Y SIMULADOR (INDEPENDIENTES DE INTERNET)
-    // =========================================================================
-    
-    // --- NAVEGACIÓN DIAPOSITIVAS ---
-    const slides = document.querySelectorAll('.slide');
-    const btnNext = document.getElementById('next-btn');
-    const btnPrev = document.getElementById('prev-btn');
-    const counter = document.getElementById('current-slide-num');
-    let currentSlide = 0;
+    // Inicializar Presentación
+    window.totalSlides = document.querySelectorAll('.slide').length;
+    window.actualizarUI();
 
-    function updateSlides() {
-        if (!slides.length) return;
-        slides.forEach((slide, index) => {
-            slide.classList.remove('active');
-            if (index === currentSlide) slide.classList.add('active');
-        });
-        
-        if (counter) counter.innerText = (currentSlide + 1) + " / " + slides.length;
-        if (btnPrev) btnPrev.style.opacity = currentSlide === 0 ? "0.3" : "1";
-        if (btnNext) btnNext.style.opacity = currentSlide === slides.length - 1 ? "0.3" : "1";
-    }
-
-    if (btnNext) btnNext.addEventListener('click', () => { if (currentSlide < slides.length - 1) { currentSlide++; updateSlides(); } });
-    if (btnPrev) btnPrev.addEventListener('click', () => { if (currentSlide > 0) { currentSlide--; updateSlides(); } });
-    
+    // Navegación con Teclado
     document.addEventListener('keydown', (e) => {
         const overlay = document.getElementById('game-overlay-wrapper');
         if (!overlay || overlay.classList.contains('hidden')) {
-            if (e.key === 'ArrowRight' || e.key === 'Space') { if (currentSlide < slides.length - 1) { currentSlide++; updateSlides(); } }
-            if (e.key === 'ArrowLeft') { if (currentSlide > 0) { currentSlide--; updateSlides(); } }
+            if (e.key === 'ArrowRight' || e.key === 'Space') { window.moverAdelante(); }
+            if (e.key === 'ArrowLeft') { window.moverAtras(); }
         }
     });
-    updateSlides();
 
-    // --- EFECTO 3D EN TARJETAS ---
+    // Efecto 3D en Tarjetas
     const cards3D = document.querySelectorAll('.3d-card');
     cards3D.forEach(card => {
         card.addEventListener('mousemove', (e) => {
-            // Desactiva el 3D en celulares para no bugear el scroll táctil
             if(window.innerWidth < 900) return; 
             const rect = card.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
             card.style.transform = `perspective(1000px) rotateX(${((y - rect.height/2) / (rect.height/2)) * -10}deg) rotateY(${((x - rect.width/2) / (rect.width/2)) * 10}deg) scale3d(1.05, 1.05, 1.05)`;
@@ -47,68 +134,8 @@ document.addEventListener('DOMContentLoaded', () => {
         card.addEventListener('mouseleave', () => { card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`; });
     });
 
-    // --- SIMULADOR CHAT (SLIDE 6) ---
-    const btnRunSim = document.getElementById('btn-run-sim');
-    let simRunning = false;
-    if (btnRunSim) {
-        btnRunSim.addEventListener('click', async () => {
-            if (simRunning) return; 
-            simRunning = true;
-            const chatHistory = document.getElementById('chat-history');
-            if (!chatHistory) return;
-
-            chatHistory.innerHTML = ""; 
-            btnRunSim.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Ejecutando...';
-            
-            const msgs = [
-                { r: 'judge', t: "Juez: Pregunta 1. ¿Si te doy una matriz de 3x3 de ceros, cuál es su determinante?", d: 1000 },
-                { r: 'entity', t: "Sujeto B: Cero. Cualquier matriz con una fila o columna de ceros tiene determinante cero. ¿Era una trampa?", d: 3500 },
-                { r: 'judge', t: "Juez: Correcto. Pregunta 2. ¿Qué te hace sentir triste?", d: 2000 },
-                { r: 'entity', t: "Sujeto B: Ver a mis seres queridos sufrir y no poder evitarlo.", d: 4500 },
-                { r: 'judge', t: "Juez: Respuesta muy humana. Pausando protocolo...", d: 2000 }
-            ];
-            
-            for (let i = 0; i < msgs.length; i++) {
-                const typing = document.createElement('div'); 
-                typing.className = `msg-bubble ${msgs[i].r}`; 
-                typing.innerHTML = '<i class="fa-solid fa-ellipsis fa-fade"></i>'; 
-                chatHistory.appendChild(typing); chatHistory.scrollTop = chatHistory.scrollHeight;
-                await new Promise(r => setTimeout(r, msgs[i].d));
-                chatHistory.removeChild(typing); 
-                const real = document.createElement('div'); real.className = `msg-bubble ${msgs[i].r}`; real.textContent = msgs[i].t; 
-                chatHistory.appendChild(real); chatHistory.scrollTop = chatHistory.scrollHeight;
-            }
-            btnRunSim.innerHTML = '<i class="fa-solid fa-play"></i> EJECUTAR SIMULACIÓN'; 
-            simRunning = false;
-        });
-    }
-
-    // --- ABRIR Y CERRAR EL TEST DESDE LA PORTADA ---
-    const btnOpenTest = document.getElementById('btn-open-test');
-    const btnCloseTest = document.getElementById('btn-close-test');
-    const gameOverlay = document.getElementById('game-overlay-wrapper');
-
-    function showGameScreen(screenId) {
-        document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('active-game-screen'));
-        setTimeout(() => { const t = document.getElementById(screenId); if(t) t.classList.add('active-game-screen'); }, 50);
-    }
-
-    if (btnOpenTest) {
-        btnOpenTest.addEventListener('click', () => {
-            if(gameOverlay) { gameOverlay.classList.remove('hidden'); showGameScreen('test-lobby-screen'); }
-        });
-    }
-
-    if (btnCloseTest) {
-        btnCloseTest.addEventListener('click', () => {
-            if(gameOverlay) { gameOverlay.classList.add('hidden'); }
-            if(window.limpiarSesionSupabase) window.limpiarSesionSupabase();
-        });
-    }
-
-
     // =========================================================================
-    // BLOQUE 2: SISTEMA MULTIJUGADOR (SUPABASE AISLADO)
+    // 3. SISTEMA MULTIJUGADOR SUPABASE (Aislado con Try/Catch)
     // =========================================================================
     const questionPool = [
         { q: "A nivel de software, ¿qué es la IA moderna?", options: ["Una mente consciente artificial", "Modelos probabilísticos que aprenden de datos", "Instrucciones rígidas paso a paso", "Un cerebro biológico simulado"], a: 1 },
@@ -170,9 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         if (typeof window.supabase !== 'undefined') {
             miSupabase = window.supabase.createClient('https://osriruqcnxshmkvdhijw.supabase.co', 'sb_publishable_9-dt8ZHtX3uAQtb4vMPKGQ__34i08qS');
-            console.log("Supabase OK");
         }
-    } catch(e) { console.warn("Supabase no cargó, pero la app sigue funcionando."); }
+    } catch(err) { console.warn("Modo offline: Supabase no disponible."); }
 
     window.limpiarSesionSupabase = async function() {
         if(!miSupabase) return;
@@ -227,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
             await miSupabase.from('rooms').update({ state: 'playing' }).eq('code', currentRoomCode);
             const { data } = await miSupabase.from('players').select('*').eq('room_code', currentRoomCode);
             pintarTablaPosiciones(data);
-            showGameScreen('leaderboard-screen');
+            window.mostrarPantallaJuego('leaderboard-screen');
         });
     }
 
@@ -258,7 +284,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('waiting-room-code').innerText = c;
             document.getElementById('my-waiting-name').innerText = n;
             document.getElementById('my-waiting-avatar').className = `fa-solid ${currentPlayerAvatar}`;
-            showGameScreen('waiting-screen');
+            window.mostrarPantallaJuego('waiting-screen');
 
             roomSubscription = miSupabase.channel('player_room_listen')
                 .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'rooms', filter: `code=eq.${currentRoomCode}` }, payload => {
@@ -272,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function iniciarTestJugador() {
         let shuffled = [...questionPool].sort(() => 0.5 - Math.random());
         gameQuestions = shuffled.slice(0, 5); currentQIndex = 0; score = 0;
-        showGameScreen('game-screen'); cargarPregunta();
+        window.mostrarPantallaJuego('game-screen'); cargarPregunta();
     }
 
     function cargarPregunta() {
@@ -321,7 +347,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if(!miSupabase) return;
         const { data } = await miSupabase.from('players').select('*').eq('room_code', currentRoomCode);
         pintarTablaPosiciones(data);
-        showGameScreen('leaderboard-screen');
+        window.mostrarPantallaJuego('leaderboard-screen');
         
         if(!playersSubscription) {
              playersSubscription = miSupabase.channel('player_leaderboard')
@@ -346,10 +372,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const btnNewLobby = document.getElementById('btn-new-lobby');
-    if(btnNewLobby) btnNewLobby.addEventListener('click', () => { window.limpiarSesionSupabase(); showGameScreen('test-lobby-screen'); });
+    if(btnNewLobby) btnNewLobby.addEventListener('click', () => { window.limpiarSesionSupabase(); window.mostrarPantallaJuego('test-lobby-screen'); });
 
     // =========================================================================
-    // BLOQUE 3: CANVAS DE RED NEURONAL
+    // 4. CANVAS DE RED NEURONAL DE FONDO
     // =========================================================================
     const canvas = document.getElementById('network-canvas');
     if (canvas) {

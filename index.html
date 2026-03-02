@@ -42,7 +42,7 @@
                     <div class="flip-card 3d-card">
                         <div class="flip-card-inner">
                             <div class="flip-card-front info-card">
-                                <i class="fa-solid fa-microchip"></i><h3>IA Estrecha (ANI)</h3><p>(Pasa el cursor para ver más)</p>
+                                <i class="fa-solid fa-microchip"></i><h3>IA Estrecha (ANI)</h3><p>(Pasa el cursor)</p>
                             </div>
                             <div class="flip-card-back">
                                 <h3>IA Estrecha</h3>
@@ -53,7 +53,7 @@
                     <div class="flip-card 3d-card">
                         <div class="flip-card-inner">
                             <div class="flip-card-front info-card">
-                                <i class="fa-solid fa-globe"></i><h3>IA General (AGI)</h3><p>(Pasa el cursor para ver más)</p>
+                                <i class="fa-solid fa-globe"></i><h3>IA General (AGI)</h3><p>(Pasa el cursor)</p>
                             </div>
                             <div class="flip-card-back" style="background: rgba(112, 0, 255, 0.8);">
                                 <h3>IA General</h3>
@@ -68,9 +68,22 @@
         <section class="slide" id="slide-3">
             <div class="content text-center">
                 <h2><i class="fa-solid fa-user-astronaut"></i> Alan Turing: El Arquitecto Lógico</h2>
-                <p class="max-w mb-2">Matemático y criptógrafo (1912-1954). Antes de que existiera el primer microprocesador, Turing definió matemáticamente cómo funcionaría todo el software del futuro.</p>
                 
-                <div class="grid-3x reveal-up delay-1">
+                <div class="split-layout mb-2 align-start">
+                    <div class="left-pane text-left reveal-left">
+                        <p>Matemático y criptógrafo británico (1912-1954). Es considerado universalmente como el <strong>Padre de la Computación Moderna</strong> y de la Inteligencia Artificial.</p>
+                        <p>Antes de que existiera el primer microprocesador, Turing definió matemáticamente cómo funcionaría todo el software del futuro, sentando las bases de la computación teórica con sus modelos abstractos.</p>
+                    </div>
+                    
+                    <div class="right-pane text-center reveal-right">
+                        <div class="image-frame 3d-card">
+                            <img src="img/turing.jpg" alt="Alan Turing portrait">
+                            <div class="frame-caption" style="font-size: 0.9rem; color: #aaa; margin-top: 5px;">Alan Turing (1912-1954)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="grid-3x reveal-up delay-1 mt-3">
                     <div class="flip-card 3d-card">
                         <div class="flip-card-inner">
                             <div class="flip-card-front info-card"><i class="fa-solid fa-shield-halved"></i><h3>La Máquina Enigma</h3></div>
@@ -265,7 +278,7 @@
             <div class="slide-counter" id="current-slide-num">1 / 10</div>
             <button id="next-btn" class="control-btn" onclick="moverAdelante()"><i class="fa-solid fa-arrow-right"></i></button>
             
-            <button class="btn-cyber" style="padding: 5px 15px; font-size: 1rem; border-color: #ff3355; color: #ff3355; margin-left: 10px;" onclick="exportarPDF()">
+            <button class="btn-cyber btn-click-seguro" style="padding: 5px 15px; font-size: 1rem; border-color: #ff3355; color: #ff3355; margin-left: 10px;" onclick="exportarPDF()">
                 <i class="fa-solid fa-file-pdf"></i> PDF
             </button>
         </div>

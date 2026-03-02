@@ -20,7 +20,6 @@ window.actualizarUI = function() {
 window.moverAdelante = function() { if (window.currentSlide < window.totalSlides - 1) { window.currentSlide++; window.actualizarUI(); } };
 window.moverAtras = function() { if (window.currentSlide > 0) { window.currentSlide--; window.actualizarUI(); } };
 
-// SIMULADOR AVANZADO (Con consola lateral)
 window.simRunning = false;
 window.iniciarSimuladorAvanzado = async function() {
     if(window.simRunning) return;
@@ -48,7 +47,6 @@ window.iniciarSimuladorAvanzado = async function() {
     for (let i = 0; i < steps.length; i++) {
         const step = steps[i];
         
-        // Mostrar pensamiento
         if(step.thought) {
             const tLi = document.createElement('li');
             tLi.innerHTML = step.thought.replace('\n', '<br>');
@@ -60,7 +58,6 @@ window.iniciarSimuladorAvanzado = async function() {
             await new Promise(r => setTimeout(r, step.d));
         }
 
-        // Mostrar chat
         if(step.msg) {
             const typing = document.createElement('div');
             typing.className = `msg-bubble ${step.msg.r}`;
@@ -82,31 +79,41 @@ window.iniciarSimuladorAvanzado = async function() {
     window.simRunning = false;
 };
 
-// EXPORTAR PDF
+// =========================================================================
+// NUEVO SISTEMA DE EXPORTACIÓN A PDF (HORIZONTAL 16:9, TEMA OSCURO)
+// =========================================================================
 window.exportarPDF = function() {
     if(typeof html2pdf === 'undefined') { alert("Cargando librerías, intenta en un segundo."); return; }
     const element = document.getElementById('main-presentation');
     
-    // Añadir clase para cambiar colores oscuros a claros para imprimir
+    // Añadir clase para reestructurar las diapositivas verticalmente y fotografiarlas
     element.classList.add('pdf-export-mode');
     
     const opt = {
-      margin:       0.5,
+      margin:       0, // Sin márgenes para que sea una diapositiva perfecta
       filename:     'IA_y_Turing_UPEC.pdf',
-      image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
-      jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      image:        { type: 'jpeg', quality: 1 },
+      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#05050a', width: 1920, windowWidth: 1920 },
+      jsPDF:        { unit: 'px', format: [1920, 1080], orientation: 'landscape', hotfixes: ["px_scaling"] }
     };
     
-    // Crear una capa de carga
+    // Capa de carga elegante
     const loader = document.createElement('div');
-    loader.style = "position:fixed; top:0;left:0; width:100vw;height:100vh; background:rgba(0,0,0,0.8); color:#00e5ff; display:flex; justify-content:center; align-items:center; z-index:9999999; font-size:2rem; font-family:monospace;";
-    loader.innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> &nbsp; Generando PDF...";
+    loader.style = "position:fixed; top:0;left:0; width:100vw;height:100vh; background:rgba(5,5,10,0.95); color:#00e5ff; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999999; font-family:'Fira Code', monospace;";
+    loader.innerHTML = "<i class='fa-solid fa-spinner fa-spin' style='font-size:4rem; margin-bottom:20px;'></i> <p style='font-size:1.5rem; font-weight:bold;'>Generando PDF en alta calidad...</p><p style='font-size:1rem; color:#aaa;'>(Esto puede tardar unos segundos, procesando 10 páginas)</p>";
     document.body.appendChild(loader);
 
     html2pdf().set(opt).from(element).save().then(() => {
+        // Remover todo al terminar y regresar a la normalidad
         element.classList.remove('pdf-export-mode');
         document.body.removeChild(loader);
+        window.actualizarUI(); 
+    }).catch(err => {
+        console.error(err);
+        alert("Error al generar PDF.");
+        element.classList.remove('pdf-export-mode');
+        document.body.removeChild(loader);
+        window.actualizarUI();
     });
 };
 
@@ -354,9 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnNewLobby = document.getElementById('btn-new-lobby');
     if(btnNewLobby) btnNewLobby.addEventListener('click', () => { window.limpiarSesionSupabase(); window.mostrarPantallaJuego('test-lobby-screen'); });
 
-    // =========================================================================
-    // 4. CANVAS RED NEURONAL ANIMADO
-    // =========================================================================
     const canvas = document.getElementById('network-canvas');
     if (canvas) {
         const ctx = canvas.getContext('2d'); let w, h; let particles = [];

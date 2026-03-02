@@ -1,5 +1,5 @@
 // =========================================================================
-// 1. FUNCIONES GLOBALES (A prueba de fallos)
+// 1. FUNCIONES GLOBALES (A prueba de fallos, cargan instantáneamente)
 // =========================================================================
 window.currentSlide = 0;
 window.totalSlides = 10;
@@ -17,6 +17,7 @@ window.actualizarUI = function() {
     if (btnPrev) btnPrev.style.opacity = window.currentSlide === 0 ? "0.3" : "1";
     if (btnNext) btnNext.style.opacity = window.currentSlide === slides.length - 1 ? "0.3" : "1";
 };
+
 window.moverAdelante = function() { if (window.currentSlide < window.totalSlides - 1) { window.currentSlide++; window.actualizarUI(); } };
 window.moverAtras = function() { if (window.currentSlide > 0) { window.currentSlide--; window.actualizarUI(); } };
 
@@ -53,10 +54,7 @@ window.iniciarSimuladorAvanzado = async function() {
             thoughtProcess.appendChild(tLi);
             thoughtProcess.parentElement.scrollTop = thoughtProcess.parentElement.scrollHeight;
         }
-
-        if(step.d && !step.msg) {
-            await new Promise(r => setTimeout(r, step.d));
-        }
+        if(step.d && !step.msg) await new Promise(r => setTimeout(r, step.d));
 
         if(step.msg) {
             const typing = document.createElement('div');
@@ -84,11 +82,21 @@ window.mostrarPantallaJuego = function(screenId) {
     gameScreens.forEach(s => s.classList.remove('active-game-screen'));
     setTimeout(() => { const target = document.getElementById(screenId); if(target) target.classList.add('active-game-screen'); }, 50);
 };
-window.abrirTest = function() { const gameOverlay = document.getElementById('game-overlay-wrapper'); if(gameOverlay) { gameOverlay.classList.remove('hidden'); window.mostrarPantallaJuego('test-lobby-screen'); } };
-window.cerrarTest = function() { const gameOverlay = document.getElementById('game-overlay-wrapper'); if(gameOverlay) gameOverlay.classList.add('hidden'); if(typeof window.limpiarSesionSupabase === 'function') window.limpiarSesionSupabase(); };
+
+window.abrirTest = function() { 
+    const gameOverlay = document.getElementById('game-overlay-wrapper'); 
+    if(gameOverlay) { gameOverlay.classList.remove('hidden'); window.mostrarPantallaJuego('test-lobby-screen'); } 
+};
+
+window.cerrarTest = function() { 
+    const gameOverlay = document.getElementById('game-overlay-wrapper'); 
+    if(gameOverlay) gameOverlay.classList.add('hidden'); 
+    if(typeof window.limpiarSesionSupabase === 'function') window.limpiarSesionSupabase(); 
+};
+
 
 // =========================================================================
-// 2. CARGA DE PÁGINA
+// 2. CONFIGURACIÓN AL CARGAR LA PÁGINA
 // =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -103,8 +111,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    const cards3D = document.querySelectorAll('.3d-card');
+    cards3D.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            if(window.innerWidth < 900) return; 
+            const rect = card.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+            card.style.transform = `perspective(1000px) rotateX(${((y - rect.height/2) / (rect.height/2)) * -10}deg) rotateY(${((x - rect.width/2) / (rect.width/2)) * 10}deg) scale3d(1.05, 1.05, 1.05)`;
+        });
+        card.addEventListener('mouseleave', () => { card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`; });
+    });
+
     // =========================================================================
-    // 3. SISTEMA MULTIJUGADOR SUPABASE 
+    // 3. SISTEMA MULTIJUGADOR SUPABASE
     // =========================================================================
     const questionPool = [
         { q: "A nivel de software, ¿qué es la IA moderna?", options: ["Una mente consciente artificial", "Modelos probabilísticos que aprenden de datos", "Instrucciones rígidas paso a paso", "Un cerebro biológico simulado"], a: 1 },

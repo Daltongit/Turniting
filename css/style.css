@@ -18,8 +18,8 @@ body { font-family: var(--font-text); background-color: var(--bg-color); color: 
 .slide {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     opacity: 0; visibility: hidden; transition: opacity 0.6s ease, transform 0.6s ease;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 5% 10% 100px 10%; transform: scale(0.95) translateY(20px);
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+    padding: 5% 10% 120px 10%; transform: scale(0.95) translateY(20px);
     overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--primary) transparent;
     -webkit-overflow-scrolling: touch; 
 }
@@ -117,7 +117,7 @@ p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.2rem; }
 .game-screen { position: absolute; top: 0; left: 0; width: 100%; min-height: 100vh; opacity: 0; visibility: hidden; transition: 0.5s; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 4rem 5% 2rem 5%; }
 .game-screen.active-game-screen { opacity: 1; visibility: visible; z-index: 10; position: relative;}
 
-/* Animaciones Grales */
+/* Animaciones */
 .glitch-text { position: relative; color: white; display: inline-block; }
 .glitch-text::before, .glitch-text::after { content: attr(data-text); position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0.8; }
 .glitch-text::before { left: 2px; text-shadow: -2px 0 red; clip: rect(24px, 550px, 90px, 0); animation: glitch-anim 3s infinite linear alternate-reverse; }
@@ -129,12 +129,11 @@ p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.2rem; }
 .slide.active .reveal-up { opacity: 1; transform: translateY(0); }
 .delay-1 { transition-delay: 0.2s !important; } .delay-2 { transition-delay: 0.4s !important; } .delay-3 { transition-delay: 0.6s !important; }
 
-/* Responsive celular (Juego) */
 @media (max-width: 900px) {
     h1 { font-size: 2.5rem; } h2 { font-size: 1.8rem; } .subtitle { font-size: 1.4rem !important; } p, ul.styled-list li { font-size: 1rem; }
     .split-layout, .grid-2x2, .grid-3x, .timeline-grid, .lobby-grid, .options-grid { grid-template-columns: 1fr; gap: 1.5rem; text-align: center; }
     .split-layout.reverse { direction: ltr; } .styled-list { text-align: left; }
-    .slide { display: flex !important; padding: 2rem 5% 150px 5% !important; justify-content: flex-start;}
+    .slide { display: block !important; padding: 2rem 5% 200px 5% !important; }
     .content { display: block; margin: 0 auto; }
     .flip-card { min-height: 220px; } 
     .info-card, .timeline-card { padding: 1.2rem; }
@@ -142,124 +141,7 @@ p { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 1.2rem; }
     .chat-interface { height: 300px; }
     .presentation-controls { width: auto; max-width: 380px; padding: 10px 15px; bottom: 1rem; justify-content: space-around; }
     .tape-track span { width: 35px; height: 35px; font-size: 1.2rem; } .formula-box { font-size: 1.2rem; }
-    
     .game-screen { display: block !important; padding: 3rem 5% 150px 5% !important; }
     .mobile-title { font-size: 2rem; } .room-code-mobile { font-size: 3rem !important; } .lobby-panel { padding: 1.5rem; } .avatar-option { font-size: 1.8rem; }
     .game-header { flex-direction: column; gap: 10px; padding: 10px 15px; border-radius: 15px;} #question-text { font-size: 1.2rem; } .question-box { min-height: 120px; padding: 1.5rem; } .option-btn { font-size: 0.95rem; padding: 1rem; }
-    
-    /* Lobby Grid y otros del test */
-    .lobby-grid { display: grid; grid-template-columns: 1fr; gap: 2rem; width: 100%; align-items: start; }
-    .lobby-panel { background: var(--card-bg); border: 1px solid var(--border-color); padding: 1.5rem; border-radius: 16px; }
-    .btn-full { width: 100%; padding: 12px; font-size: 1rem; }
-    .room-code-display { padding: 1.5rem; border-radius: 10px; border: 2px dashed var(--border-color); margin-bottom: 1.5rem; }
-    .players-list-box { text-align: left; margin-bottom: 1.5rem; max-height: 150px; overflow-y: auto; }
-    .players-list-box ul { list-style: none; border: 1px solid var(--border-color); border-radius: 8px; padding: 10px; background: rgba(0,0,0,0.2); }
-    .players-list-box li { padding: 8px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; gap: 10px; font-size: 0.9rem;}
-    .empty-list { color: var(--text-muted); font-style: italic; text-align: center; }
-    .input-group { text-align: left; margin-bottom: 1rem; }
-    .input-group label { display: block; margin-bottom: 0.5rem; font-weight: bold; color: var(--primary); font-size: 0.9rem;}
-    .input-group input { width: 100%; padding: 12px; background: rgba(0,0,0,0.3); border: 2px solid var(--border-color); border-radius: 8px; color: #fff; font-family: var(--font-code); font-size: 1rem; }
-    .avatars-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 5px; }
-    .avatar-option { aspect-ratio: 1; background: rgba(0,0,0,0.3); border: 2px solid var(--border-color); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: var(--text-muted); cursor: pointer; transition: 0.3s; }
-    .avatar-option.active { border-color: var(--primary); background: var(--primary-glow); color: #fff; }
-    .waiting-animation { font-size: 3rem; color: var(--secondary); margin-bottom: 1.5rem; }
-    .player-profile-display { background: var(--card-bg); padding: 1.5rem; border-radius: 16px; border: 2px solid var(--primary); display: inline-block; }
-    .waiting-avatar { font-size: 4rem; color: var(--primary); }
-    .game-container { width: 100%; max-width: 800px; }
-    .timer-box { display: flex; align-items: center; gap: 10px; font-size: 1.2rem; font-weight: bold; color: var(--primary); position: relative; }
-    .timer-bar-bg { position: absolute; bottom: -8px; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
-    .question-counter { font-family: var(--font-code); font-size: 1rem; color: var(--text-muted); }
-    .option-btn { background: rgba(255,255,255,0.05); border: 2px solid var(--border-color); color: #fff; padding: 1.2rem; font-size: 1rem; border-radius: 10px; cursor: pointer; text-align: left; }
-    .leaderboard-container { width: 100%; max-width: 800px; margin: auto; background: var(--card-bg); border-radius: 16px; overflow: hidden; border: 1px solid var(--border-color); }
-    .table-responsive { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch;}
-    .leaderboard-table { width: 100%; border-collapse: collapse; text-align: left; min-width: 400px; }
-    .leaderboard-table th { background: rgba(0,229,255,0.1); padding: 1rem; color: var(--primary); font-size: 0.9rem;}
-    .leaderboard-table td { padding: 1rem; border-bottom: 1px solid var(--border-color); font-size: 0.95rem; white-space: nowrap;}
 }
-
-/* =========================================================
-   LA MAGIA DEL PDF: 10 PÁGINAS EXACTAS, HORIZONTAL Y SIN 3D
-   ========================================================= */
-body.exporting-pdf, body.exporting-pdf html {
-    width: 1920px !important;
-    height: auto !important;
-    overflow: visible !important;
-    background-color: #05050a !important;
-    margin: 0 !important;
-    padding: 0 !important;
-}
-
-body.exporting-pdf #main-presentation {
-    width: 1920px !important;
-    display: block !important; /* Apila las diapositivas verticalmente */
-    background-color: #05050a !important;
-}
-
-body.exporting-pdf .slide {
-    position: relative !important;
-    display: flex !important; 
-    align-items: center !important; 
-    justify-content: center !important;
-    width: 1920px !important;
-    height: 1080px !important; /* FUERZA 1080p exacto por diapositiva */
-    min-height: 1080px !important;
-    max-height: 1080px !important;
-    overflow: hidden !important; /* CORRECCIÓN AL ERROR DE 30 PÁGINAS */
-    transform: none !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    margin: 0 !important;
-    padding: 5% 10% !important;
-    box-sizing: border-box !important;
-    background-color: #05050a !important;
-    border: none !important;
-    /* Evita que se corten a la mitad */
-    page-break-inside: avoid !important;
-}
-
-body.exporting-pdf .content {
-    margin: auto !important;
-    width: 100% !important;
-}
-
-/* ELIMINAR EL EFECTO ESPEJO DE LAS TARJETAS */
-body.exporting-pdf .flip-card {
-    perspective: none !important; /* Apaga el motor 3D */
-    transform: none !important;
-    height: auto !important;
-}
-body.exporting-pdf .flip-card-inner {
-    transform: none !important;
-    transition: none !important;
-    transform-style: flat !important; /* La hace plana */
-}
-body.exporting-pdf .flip-card-front {
-    display: none !important; /* Oculta la cara con el ícono */
-}
-body.exporting-pdf .flip-card-back {
-    display: flex !important; /* Muestra el texto explicativo */
-    position: relative !important;
-    transform: none !important; /* QUITA EL GIRO DE 180 GRADOS */
-    visibility: visible !important;
-    opacity: 1 !important;
-    backface-visibility: visible !important;
-    background: rgba(20, 20, 30, 0.95) !important;
-    border: 2px solid var(--primary) !important;
-    height: auto !important;
-    min-height: 250px !important;
-}
-
-/* Ocultar elementos innecesarios para el PDF */
-body.exporting-pdf .presentation-controls,
-body.exporting-pdf #network-canvas,
-body.exporting-pdf #game-overlay-wrapper,
-body.exporting-pdf .glowing-orb {
-    display: none !important; 
-}
-
-/* Congela animaciones en la foto */
-body.exporting-pdf * {
-    transition: none !important;
-    animation: none !important;
-}
-body.exporting-pdf .chat-history { overflow: hidden !important; height: auto !important;}

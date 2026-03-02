@@ -79,60 +79,6 @@ window.iniciarSimuladorAvanzado = async function() {
     window.simRunning = false;
 };
 
-// =========================================================================
-// NUEVO SISTEMA DE EXPORTACIÓN PDF (REPARADO PARA 10 PÁGINAS EXACTAS)
-// =========================================================================
-window.exportarPDF = function() {
-    if(typeof html2pdf === 'undefined') { alert("Cargando librerías, intenta en un segundo."); return; }
-    
-    // 1. Capa de Carga
-    const loader = document.createElement('div');
-    loader.id = 'pdf-loader';
-    loader.style = "position:fixed; top:0;left:0; width:100vw;height:100vh; background:rgba(5,5,10,0.95); color:#00e5ff; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999999; font-family:'Fira Code', monospace;";
-    loader.innerHTML = "<i class='fa-solid fa-spinner fa-spin' style='font-size:4rem; margin-bottom:20px;'></i> <p style='font-size:1.5rem; font-weight:bold;'>Fotografiando Diapositivas...</p><p style='font-size:1rem; color:#aaa;'>(Por favor no toques nada. Esto tardará unos segundos...)</p>";
-    document.body.appendChild(loader);
-
-    // 2. Cambiamos la vista del navegador al formato PDF (Apila las 10 diapositivas verticalmente)
-    document.body.classList.add('exporting-pdf');
-
-    // 3. Le damos 1 segundo al navegador para que dibuje el modo plano
-    setTimeout(() => {
-        const element = document.getElementById('main-presentation');
-        
-        // Configuraciones de cámara
-        const opt = {
-            margin:       0,
-            filename:     'IA_y_Turing_UPEC.pdf',
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { 
-                scale: 1, // Escala 1 a 1 para evitar recortes raros
-                useCORS: true, 
-                backgroundColor: '#05050a', 
-                width: 1920,
-                windowWidth: 1920,
-                scrollY: 0
-            },
-            // Le decimos al generador que cada foto va en una hoja de 1920x1080 horizontal
-            jsPDF: { unit: 'px', format: [1920, 1080], orientation: 'landscape', hotfixes: ["px_scaling"] }
-        };
-
-        // Imprimir y Guardar
-        html2pdf().set(opt).from(element).save().then(() => {
-            document.body.classList.remove('exporting-pdf');
-            const ld = document.getElementById('pdf-loader');
-            if(ld) document.body.removeChild(ld);
-            window.actualizarUI(); 
-        }).catch(err => {
-            console.error(err);
-            alert("Error al generar el PDF. Revisa la consola.");
-            document.body.classList.remove('exporting-pdf');
-            const ld = document.getElementById('pdf-loader');
-            if(ld) document.body.removeChild(ld);
-            window.actualizarUI();
-        });
-    }, 1000); 
-};
-
 window.mostrarPantallaJuego = function(screenId) {
     const gameScreens = document.querySelectorAll('.game-screen');
     gameScreens.forEach(s => s.classList.remove('active-game-screen'));

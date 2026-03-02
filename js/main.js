@@ -84,37 +84,49 @@ window.iniciarSimuladorAvanzado = async function() {
 // =========================================================================
 window.exportarPDF = function() {
     if(typeof html2pdf === 'undefined') { alert("Cargando librerías, intenta en un segundo."); return; }
-    const element = document.getElementById('main-presentation');
     
-    // Añadir clase para reestructurar las diapositivas verticalmente y fotografiarlas
-    element.classList.add('pdf-export-mode');
-    
-    const opt = {
-      margin:       0, // Sin márgenes para que sea una diapositiva perfecta
-      filename:     'IA_y_Turing_UPEC.pdf',
-      image:        { type: 'jpeg', quality: 1 },
-      html2canvas:  { scale: 2, useCORS: true, backgroundColor: '#05050a', width: 1920, windowWidth: 1920 },
-      jsPDF:        { unit: 'px', format: [1920, 1080], orientation: 'landscape', hotfixes: ["px_scaling"] }
-    };
-    
-    // Capa de carga elegante
+    // 1. Poner pantalla de carga visual (Porque tomará unos segundos)
     const loader = document.createElement('div');
+    loader.id = 'pdf-loader';
     loader.style = "position:fixed; top:0;left:0; width:100vw;height:100vh; background:rgba(5,5,10,0.95); color:#00e5ff; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:9999999; font-family:'Fira Code', monospace;";
-    loader.innerHTML = "<i class='fa-solid fa-spinner fa-spin' style='font-size:4rem; margin-bottom:20px;'></i> <p style='font-size:1.5rem; font-weight:bold;'>Generando PDF en alta calidad...</p><p style='font-size:1rem; color:#aaa;'>(Esto puede tardar unos segundos, procesando 10 páginas)</p>";
+    loader.innerHTML = "<i class='fa-solid fa-spinner fa-spin' style='font-size:4rem; margin-bottom:20px;'></i> <p style='font-size:1.5rem; font-weight:bold;'>Generando PDF en Alta Calidad...</p><p style='font-size:1rem; color:#aaa;'>(Por favor espera, procesando las 10 diapositivas...)</p>";
     document.body.appendChild(loader);
 
-    html2pdf().set(opt).from(element).save().then(() => {
-        // Remover todo al terminar y regresar a la normalidad
-        element.classList.remove('pdf-export-mode');
-        document.body.removeChild(loader);
-        window.actualizarUI(); 
-    }).catch(err => {
-        console.error(err);
-        alert("Error al generar PDF.");
-        element.classList.remove('pdf-export-mode');
-        document.body.removeChild(loader);
-        window.actualizarUI();
-    });
+    // 2. Aplicar la clase al BODY para romper el 'overflow: hidden' y permitir el escaneo vertical
+    document.body.classList.add('exporting-pdf');
+
+    // 3. Darle 500ms al navegador para que dibuje el DOM de 10 páginas antes de tomar la foto
+    setTimeout(() => {
+        const element = document.getElementById('main-presentation');
+        
+        const opt = {
+            margin:       0, // Sin márgenes, foto a pantalla completa
+            filename:     'Presentacion_IA_UPEC.pdf',
+            image:        { type: 'jpeg', quality: 1 }, // Máxima calidad
+            html2canvas:  { 
+                scale: 2, // Retina display
+                useCORS: true, 
+                backgroundColor: '#05050a', 
+                width: 1920, 
+                windowWidth: 1920,
+                scrollY: 0 // Evita recortes si estabas scrolleando
+            },
+            jsPDF: { unit: 'px', format: [1920, 1080], orientation: 'landscape', hotfixes: ["px_scaling"] }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            // Restaurar todo a la normalidad
+            document.body.classList.remove('exporting-pdf');
+            const ld = document.getElementById('pdf-loader');
+            if(ld) document.body.removeChild(ld);
+        }).catch(err => {
+            console.error(err);
+            alert("Error al generar el PDF.");
+            document.body.classList.remove('exporting-pdf');
+            const ld = document.getElementById('pdf-loader');
+            if(ld) document.body.removeChild(ld);
+        });
+    }, 500); 
 };
 
 window.mostrarPantallaJuego = function(screenId) {

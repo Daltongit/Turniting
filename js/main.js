@@ -2,11 +2,9 @@
 // 1. FUNCIONES GLOBALES (A prueba de todo, se cargan primero)
 // =========================================================================
 
-// --- Variables para la Presentación ---
 window.currentSlide = 0;
 window.totalSlides = 10;
 
-// Funciones para moverse en las Diapositivas
 window.actualizarUI = function() {
     const slides = document.querySelectorAll('.slide');
     if (!slides.length) return;
@@ -40,7 +38,6 @@ window.moverAtras = function() {
     }
 };
 
-// Funciones para el Simulador
 window.simRunning = false;
 window.iniciarSimulador = async function() {
     if(window.simRunning) return;
@@ -81,7 +78,6 @@ window.iniciarSimulador = async function() {
     window.simRunning = false;
 };
 
-// Funciones para el Test Interactivo
 window.mostrarPantallaJuego = function(screenId) {
     const gameScreens = document.querySelectorAll('.game-screen');
     gameScreens.forEach(s => s.classList.remove('active-game-screen'));
@@ -110,11 +106,9 @@ window.cerrarTest = function() {
 // =========================================================================
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Inicializar Presentación
     window.totalSlides = document.querySelectorAll('.slide').length;
     window.actualizarUI();
 
-    // Navegación con Teclado
     document.addEventListener('keydown', (e) => {
         const overlay = document.getElementById('game-overlay-wrapper');
         if (!overlay || overlay.classList.contains('hidden')) {
@@ -123,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Efecto 3D en Tarjetas
     const cards3D = document.querySelectorAll('.3d-card');
     cards3D.forEach(card => {
         card.addEventListener('mousemove', (e) => {
@@ -135,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // =========================================================================
-    // 3. SISTEMA MULTIJUGADOR SUPABASE (Aislado con Try/Catch)
+    // 3. SISTEMA MULTIJUGADOR SUPABASE 
     // =========================================================================
     const questionPool = [
         { q: "A nivel de software, ¿qué es la IA moderna?", options: ["Una mente consciente artificial", "Modelos probabilísticos que aprenden de datos", "Instrucciones rígidas paso a paso", "Un cerebro biológico simulado"], a: 1 },
@@ -198,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof window.supabase !== 'undefined') {
             miSupabase = window.supabase.createClient('https://osriruqcnxshmkvdhijw.supabase.co', 'sb_publishable_9-dt8ZHtX3uAQtb4vMPKGQ__34i08qS');
         }
-    } catch(err) { console.warn("Modo offline: Supabase no disponible."); }
+    } catch(err) {}
 
     window.limpiarSesionSupabase = async function() {
         if(!miSupabase) return;

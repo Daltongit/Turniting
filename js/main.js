@@ -1,12 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    console.log("Sistema Base Iniciado correctamente.");
-
     // =========================================================================
-    // BLOQUE 1: LA PRESENTACIÓN (NO DEPENDE DE NADA MÁS, NO PUEDE FALLAR)
+    // BLOQUE 1: LA PRESENTACIÓN Y SIMULADOR (INDEPENDIENTES DE INTERNET)
     // =========================================================================
     
-    // NAVEGACIÓN
+    // --- NAVEGACIÓN DIAPOSITIVAS ---
     const slides = document.querySelectorAll('.slide');
     const btnNext = document.getElementById('next-btn');
     const btnPrev = document.getElementById('prev-btn');
@@ -35,9 +33,21 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === 'ArrowLeft') { if (currentSlide > 0) { currentSlide--; updateSlides(); } }
         }
     });
-    updateSlides(); // Forzar dibujo inicial
+    updateSlides();
 
-    // SIMULADOR CHAT (SLIDE 6)
+    // --- EFECTO 3D EN TARJETAS ---
+    const cards3D = document.querySelectorAll('.3d-card');
+    cards3D.forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            // Desactiva el 3D en celulares para no bugear el scroll táctil
+            if(window.innerWidth < 900) return; 
+            const rect = card.getBoundingClientRect(); const x = e.clientX - rect.left; const y = e.clientY - rect.top;
+            card.style.transform = `perspective(1000px) rotateX(${((y - rect.height/2) / (rect.height/2)) * -10}deg) rotateY(${((x - rect.width/2) / (rect.width/2)) * 10}deg) scale3d(1.05, 1.05, 1.05)`;
+        });
+        card.addEventListener('mouseleave', () => { card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`; });
+    });
+
+    // --- SIMULADOR CHAT (SLIDE 6) ---
     const btnRunSim = document.getElementById('btn-run-sim');
     let simRunning = false;
     if (btnRunSim) {
@@ -73,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // BOTONES ABRIR/CERRAR TEST
+    // --- ABRIR Y CERRAR EL TEST DESDE LA PORTADA ---
     const btnOpenTest = document.getElementById('btn-open-test');
     const btnCloseTest = document.getElementById('btn-close-test');
     const gameOverlay = document.getElementById('game-overlay-wrapper');
@@ -92,39 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnCloseTest) {
         btnCloseTest.addEventListener('click', () => {
             if(gameOverlay) { gameOverlay.classList.add('hidden'); }
-            // Forzar limpieza si existe
             if(window.limpiarSesionSupabase) window.limpiarSesionSupabase();
         });
     }
 
-    // FONDO CANVAS ANIMADO
-    const canvas = document.getElementById('network-canvas');
-    if (canvas) {
-        const ctx = canvas.getContext('2d'); let w, h; let particles = [];
-        const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
-        window.addEventListener('resize', resize); resize();
-        class P { 
-            constructor(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-.5)*.5;this.vy=(Math.random()-.5)*.5;this.r=Math.random()*2} 
-            update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>w)this.vx*=-1;if(this.y<0||this.y>h)this.vy*=-1} 
-            draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle='rgba(0,229,255,0.5)';ctx.fill()} 
-        }
-        for(let i=0;i<80;i++) particles.push(new P());
-        function animate(){
-            ctx.clearRect(0,0,w,h); particles.forEach(p=>{p.update();p.draw()});
-            for(let i=0;i<particles.length;i++){
-                for(let j=i+1;j<particles.length;j++){
-                    const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y, d=Math.sqrt(dx*dx+dy*dy);
-                    if(d<120){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(0,229,255,${.2-d/600})`;ctx.stroke()}
-                }
-            } requestAnimationFrame(animate);
-        } animate();
-    }
-
 
     // =========================================================================
-    // BLOQUE 2: SISTEMA MULTIJUGADOR SUPABASE (Protegido por Try/Catch Fuerte)
+    // BLOQUE 2: SISTEMA MULTIJUGADOR (SUPABASE AISLADO)
     // =========================================================================
-    
     const questionPool = [
         { q: "A nivel de software, ¿qué es la IA moderna?", options: ["Una mente consciente artificial", "Modelos probabilísticos que aprenden de datos", "Instrucciones rígidas paso a paso", "Un cerebro biológico simulado"], a: 1 },
         { q: "¿Qué tipo de IA es la única que existe realmente hoy en día?", options: ["IA General (AGI)", "Superinteligencia", "IA Estrecha (ANI)", "IA Consciente"], a: 2 },
@@ -182,19 +167,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let gameQuestions = []; let currentQIndex = 0; let score = 0; let timerInterval; let timeLeft = 15;
     let roomSubscription = null; let playersSubscription = null; let miSupabase = null;
 
-    // Conectamos a Supabase SÓLO si la librería cargó bien
     try {
         if (typeof window.supabase !== 'undefined') {
             miSupabase = window.supabase.createClient('https://osriruqcnxshmkvdhijw.supabase.co', 'sb_publishable_9-dt8ZHtX3uAQtb4vMPKGQ__34i08qS');
-            console.log("Supabase Conectado.");
-        } else {
-            console.warn("ADVERTENCIA: Librería Supabase bloqueada por la red. El Test Online no funcionará, pero la presentación sí.");
+            console.log("Supabase OK");
         }
-    } catch(err) {
-        console.error("Error crítico cargando Supabase:", err);
-    }
+    } catch(e) { console.warn("Supabase no cargó, pero la app sigue funcionando."); }
 
-    // Funciones de Limpieza
     window.limpiarSesionSupabase = async function() {
         if(!miSupabase) return;
         try {
@@ -210,15 +189,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if(btnStart) btnStart.disabled = true; if(hList) hList.innerHTML = '<li class="empty-list">Esperando conexiones...</li>';
     };
 
-    // HOST: CREAR SALA
     const btnCreateRoom = document.getElementById('btn-create-room');
     if(btnCreateRoom) {
         btnCreateRoom.addEventListener('click', async () => {
-            if(!miSupabase) { alert("Sin conexión a la base de datos."); return; }
+            if(!miSupabase) { alert("Sin conexión a BD."); return; }
             isHost = true;
             currentRoomCode = Math.random().toString(36).substring(2, 6).toUpperCase();
             const { error } = await miSupabase.from('rooms').insert([{ code: currentRoomCode, state: 'lobby' }]);
-            if(error) { alert("Error creando la sala en internet."); return; }
+            if(error) { alert("Error creando la sala."); return; }
 
             document.getElementById('display-room-code').innerText = currentRoomCode;
             document.getElementById('host-area-initial').classList.add('hidden');
@@ -242,7 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // HOST: INICIAR PARTIDA
     const btnStartHost = document.getElementById('btn-start-game-host');
     if(btnStartHost) {
         btnStartHost.addEventListener('click', async () => {
@@ -254,7 +231,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // JUGADOR: SELECCIÓN AVATAR
     let currentPlayerAvatar = "fa-robot";
     const avatars = document.querySelectorAll('.avatar-option');
     avatars.forEach(opt => opt.addEventListener('click', () => {
@@ -262,11 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPlayerAvatar = opt.getAttribute('data-avatar');
     }));
 
-    // JUGADOR: UNIRSE
     const btnJoin = document.getElementById('btn-join-room');
     if(btnJoin) {
         btnJoin.addEventListener('click', async () => {
-            if(!miSupabase) { alert("Sin conexión a la base de datos."); return; }
+            if(!miSupabase) { alert("Sin conexión a BD."); return; }
             const n = document.getElementById('player-name-input').value.trim();
             const c = document.getElementById('join-code-input').value.trim().toUpperCase();
             if(!n) { alert("¡Ingresa tu nombre!"); return; }
@@ -294,7 +269,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // FLUJO DE PREGUNTAS (JUGADOR)
     function iniciarTestJugador() {
         let shuffled = [...questionPool].sort(() => 0.5 - Math.random());
         gameQuestions = shuffled.slice(0, 5); currentQIndex = 0; score = 0;
@@ -374,4 +348,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnNewLobby = document.getElementById('btn-new-lobby');
     if(btnNewLobby) btnNewLobby.addEventListener('click', () => { window.limpiarSesionSupabase(); showGameScreen('test-lobby-screen'); });
 
+    // =========================================================================
+    // BLOQUE 3: CANVAS DE RED NEURONAL
+    // =========================================================================
+    const canvas = document.getElementById('network-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d'); let w, h; let particles = [];
+        const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+        window.addEventListener('resize', resize); resize();
+        class P { 
+            constructor(){this.x=Math.random()*w;this.y=Math.random()*h;this.vx=(Math.random()-.5)*.5;this.vy=(Math.random()-.5)*.5;this.r=Math.random()*2} 
+            update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>w)this.vx*=-1;if(this.y<0||this.y>h)this.vy*=-1} 
+            draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle='rgba(0,229,255,0.5)';ctx.fill()} 
+        }
+        for(let i=0;i<80;i++) particles.push(new P());
+        function animate(){
+            ctx.clearRect(0,0,w,h); particles.forEach(p=>{p.update();p.draw()});
+            for(let i=0;i<particles.length;i++){
+                for(let j=i+1;j<particles.length;j++){
+                    const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y, d=Math.sqrt(dx*dx+dy*dy);
+                    if(d<120){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(0,229,255,${.2-d/600})`;ctx.stroke()}
+                }
+            } requestAnimationFrame(animate);
+        } animate();
+    }
 });
